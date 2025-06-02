@@ -1,0 +1,48 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { ApplicationRepository } from '../../application.repository';
+import { ApplicationEntity } from '../entities/application.entity';
+import { ApplicationModel } from '../../../../domain/applications.model';
+import { ApplicationMapper } from '../mappers/application.mapper';
+import { CONNECTION_NAME } from '../../../../../config/constants';
+
+@Injectable()
+export class PgApplicationRepository implements ApplicationRepository {
+  constructor(
+    @InjectRepository(ApplicationEntity, CONNECTION_NAME)
+    private readonly repo: Repository<ApplicationEntity>,
+  ) {}
+
+  async create(application: ApplicationModel): Promise<ApplicationModel> {
+    const persistenceModel = ApplicationMapper.toPersistence(application);
+    const entity = this.repo.create(persistenceModel);
+    const saved = await this.repo.save(entity);
+    return ApplicationMapper.toDomain(saved);
+  }
+
+  async update(id: string, updates: Partial<ApplicationModel>): Promise<ApplicationModel | null> {
+    await this.repo.update(id, updates);
+    const updated = await this.repo.findOneBy({ id });
+    return updated ? ApplicationMapper.toDomain(updated) : null;
+  }
+  
+  async findById(id: string): Promise<ApplicationModel | null> {
+    const entity = await this.repo.findOneBy({ id } as any);
+    return entity ? ApplicationMapper.toDomain(entity) : null;
+  }
+
+  async findByPackageId(id: string): Promise<ApplicationModel | null> {
+    const entity = await this.repo.findOneBy({ packageId :id } as any);
+    return entity ? ApplicationMapper.toDomain(entity) : null;
+  }
+
+  async find(): Promise<ApplicationModel[]> {
+    const entities = await this.repo.find();
+    return entities.map((entity) => ApplicationMapper.toDomain(entity));
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.repo.delete(id);
+  }
+}
