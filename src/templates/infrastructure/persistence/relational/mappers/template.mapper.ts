@@ -18,7 +18,7 @@ export class TemplateMapper {
       domain.androidApp = entity.androidApp;
     }
     if (entity.iosApp) {
-      domain.iosApp = entity.androidApp;
+      domain.iosApp = entity.iosApp;
     }
 
     if (entity.installedRdt) {
