@@ -14,6 +14,10 @@ export class UpdateLinkDto {
   name?: string;
 
   @IsOptional()
+  @IsNumber()
+  domainId: number;
+
+  @IsOptional()
   @IsString()
   shortUrl?: string;
 

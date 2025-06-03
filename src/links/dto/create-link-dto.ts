@@ -14,9 +14,9 @@ export class CreateLinkDto {
   @IsNotEmpty()
   name: string;
 
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  domainName: string;
+  domainId: number;
 
   @IsNumber()
   @IsNotEmpty()

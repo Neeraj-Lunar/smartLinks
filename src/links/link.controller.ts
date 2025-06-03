@@ -7,13 +7,10 @@ import {
   Post,
   HttpCode,
   HttpStatus,
-  Req,
-  Res,
 } from '@nestjs/common';
 import { LinkService } from './links.service';
 import { CreateLinkDto } from './dto/create-link-dto';
 import { UpdateLinkDto } from './dto/update-link-dto';
-import { Response, Request } from 'express';
 
 @Controller('links')
 export class LinkController {
@@ -22,6 +19,16 @@ export class LinkController {
   @Get()
   async findAll() {
     const links = await this.linkService.find();
+    return {
+      result: links,
+    };
+  }
+
+  @Get('getDynamicLink')
+  async getLink(
+    @Body() data: any,
+  ) {
+    const links = await this.linkService.getAppLink(data);
     return {
       result: links,
     };

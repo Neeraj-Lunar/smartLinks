@@ -1,6 +1,5 @@
 import {
-  Module,
-  OnModuleInit,
+  Module
 } from '@nestjs/common';
 import { DatabaseConfig } from '../database/config/database-config.type';
 import databaseConfig from '../database/config/database.config';
@@ -8,6 +7,7 @@ import { RelationalApplicationPersistenceModule } from './infrastructure/persist
 
 import { ApplicationController } from './application.controller';
 import { ApplicationService } from './application.service';
+import { DomainModule } from 'src/domains/domains.module';
 
 // const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig).isDocumentDatabase
 //   ? DocumentApplicationPersistenceModule
@@ -15,7 +15,7 @@ import { ApplicationService } from './application.service';
 const infrastructurePersistenceModule = RelationalApplicationPersistenceModule
 
 @Module({
-  imports: [infrastructurePersistenceModule],
+  imports: [infrastructurePersistenceModule, DomainModule],
   controllers: [ApplicationController],
   providers: [ApplicationService],
   exports: [ApplicationService, infrastructurePersistenceModule],

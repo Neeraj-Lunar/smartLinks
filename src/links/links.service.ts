@@ -9,11 +9,17 @@ import { CreateLinkDto } from './dto/create-link-dto';
 import { UpdateLinkDto } from './dto/update-link-dto';
 import { nanoid } from 'nanoid';
 import { Platform } from 'src/shared/enums/platform.enum';
+import { ApplicationService } from 'src/application/application.service';
+import { LinkMapper } from './infrastructure/persistence/relational/mappers/link.mapper';
+import { DomainMapper } from 'src/domains/infrastructure/persistence/relational/mappers/domain.mapper';
 
 
 @Injectable()
 export class LinkService {
-  constructor(private readonly linkRepo: LinkRepository) {}
+  constructor(
+    private readonly linkRepo: LinkRepository,
+    private readonly applicationService: ApplicationService,
+  ) {}
 
   async create(dto: CreateLinkDto): Promise<LinkModel> {
     const shortUrl = await this.generateUniqueShortUrl();
@@ -25,6 +31,29 @@ export class LinkService {
       fullUrl,
     });
   }
+
+  async getAppLink(data: any) {
+    if (!data.packageId) {
+      throw new NotFoundException(`packageId is required`);
+    }
+    const appDomain = await this.applicationService.getAppDomain({ packageId: data.package_id });
+    const onlyPackageId = Object.keys(data).length === 1;
+    if (onlyPackageId) {
+      return LinkMapper.toApplicationDomainData(appDomain);
+    }
+  
+  
+    const linkData = await this.create({...data, domainId:appDomain.id});
+    return {
+      redirectionUrl: linkData.shortUrl,
+      linkMeta: {
+        name: linkData.name,
+        shortUrl: linkData.shortUrl,
+        fullUrl: linkData.fullUrl
+      }
+    };
+  }
+
 
   private async generateUniqueShortUrl(): Promise<string> {
     const short = nanoid(7);
@@ -105,10 +134,7 @@ export class LinkService {
       throw new NotFoundException(`Link with ID ${id} not found.`);
     }
 
-    const updated = await this.linkRepo.update(id, {
-      ...updateLinkDto,
-      updatedAt: new Date(),
-    });
+    const updated = await this.linkRepo.update(id, updateLinkDto);
 
     if (!updated) {
       throw new InternalServerErrorException('Failed to update link.');

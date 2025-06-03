@@ -1,4 +1,4 @@
-import { SdkIntegrationPlatform } from 'src/application/enums/sdk-integration-platform.enum';
+import { ProjectEntity } from 'src/projects/infrastructure/persistence/relational/entities/project.entity';
 import { Platform } from 'src/shared/enums/platform.enum';
 import { StatusEnums } from 'src/shared/enums/status.enum';
 import {
@@ -8,6 +8,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Unique,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 
 @Entity('applications')
@@ -28,11 +30,12 @@ export class ApplicationEntity {
   @Column({ name: 'package_id', type: 'varchar', nullable: false })
   packageId: string;
 
-  @Column({ name: 'sdk_key', type: 'varchar', nullable: false })
-  sdkKey: string | null;
+  @Column({ name: 'project_id', type: 'int', nullable: false })
+  projectId: number;
 
-  @Column({ name: 'sdk_list', type: 'text', array: true, nullable: false, default: `'{}'` })
-  sdkList: SdkIntegrationPlatform[];
+  @ManyToOne(() => ProjectEntity)
+  @JoinColumn({ name: 'project_id' })
+  project: ProjectEntity;
 
   @Column({ name: 'image_url', type: 'varchar', nullable: true })
   imageUrl: string | null;

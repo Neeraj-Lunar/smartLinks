@@ -1,6 +1,5 @@
-import { IsString, IsNotEmpty, IsEnum, IsOptional, IsUrl, IsArray } from 'class-validator';
+import { IsString, IsNotEmpty, IsEnum, IsOptional, IsUrl, IsArray, IsNumber } from 'class-validator';
 import { Platform } from 'src/shared/enums/platform.enum';
-import { SdkIntegrationPlatform } from 'src/application/enums/sdk-integration-platform.enum';
 import { StatusEnums } from '../../shared/enums/status.enum';
 
 export class CreateApplicationDto {
@@ -18,14 +17,9 @@ export class CreateApplicationDto {
   @IsNotEmpty()
   packageId: string;
 
-  @IsOptional()
-  @IsString()
-  sdkKey: string;
-
-  @IsOptional()
-  @IsArray()
-  @IsEnum(SdkIntegrationPlatform, { each: true })
-  sdkList: SdkIntegrationPlatform[];
+  @IsNumber()
+  @IsNotEmpty()
+  projectId: number;
 
   @IsOptional()
   @IsUrl()

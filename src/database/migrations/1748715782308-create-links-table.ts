@@ -20,8 +20,8 @@ export class CreateLinksTable1748715782308 implements MigrationInterface {
             isNullable: false,
           },
           {
-            name: 'domain_name',
-            type: 'varchar',
+            name: 'domain_id',
+            type: 'int',
             isNullable: false,
           },
           {
@@ -65,18 +65,32 @@ export class CreateLinksTable1748715782308 implements MigrationInterface {
       true,
     );
 
-    await queryRunner.createForeignKey(
-      'links',
+    await queryRunner.createForeignKeys('links', [
       new TableForeignKey({
         columnNames: ['template_id'],
         referencedColumnNames: ['id'],
         referencedTableName: 'templates',
         onDelete: 'CASCADE',
       }),
-    );
+      new TableForeignKey({
+        columnNames: ['domain_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'domains',
+        onDelete: 'CASCADE',
+      }),
+    ]);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    const table = await queryRunner.getTable('links');
+    if (table) {
+      const foreignKeys = table.foreignKeys.filter(fk =>
+        ['template_id', 'domain_id'].includes(fk.columnNames[0])
+      );
+      for (const fk of foreignKeys) {
+        await queryRunner.dropForeignKey('links', fk);
+      }
+    }
     await queryRunner.dropTable('links');
   }
 }

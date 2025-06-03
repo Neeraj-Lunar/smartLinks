@@ -21,7 +21,7 @@ export class PgApplicationRepository implements ApplicationRepository {
     return ApplicationMapper.toDomain(saved);
   }
 
-  async update(id: string, updates: Partial<ApplicationModel>): Promise<ApplicationModel | null> {
+  async update(id: string, updates: Omit<Partial<ApplicationModel>, 'project'>): Promise<ApplicationModel | null> {
     await this.repo.update(id, updates);
     const updated = await this.repo.findOneBy({ id });
     return updated ? ApplicationMapper.toDomain(updated) : null;
@@ -32,10 +32,20 @@ export class PgApplicationRepository implements ApplicationRepository {
     return entity ? ApplicationMapper.toDomain(entity) : null;
   }
 
-  async findByPackageId(id: string): Promise<ApplicationModel | null> {
-    const entity = await this.repo.findOneBy({ packageId :id } as any);
-    return entity ? ApplicationMapper.toDomain(entity) : null;
-  }
+  async findOne (filter: Partial<ApplicationModel>, options?: { withRelations?: boolean }): Promise<ApplicationModel | null> {
+      const cleanedFilter: any = Object.fromEntries(
+        Object.entries(filter).filter(([_, v]) => v !== null && v !== undefined)
+      );
+    
+      const entity = options?.withRelations
+        ? await this.repo.findOne({
+            where: cleanedFilter,
+            relations: ['project'],
+          })
+        : await this.repo.findOneBy(cleanedFilter);
+    
+      return entity ? ApplicationMapper.toDomain(entity) : null;
+    }
 
   async find(): Promise<ApplicationModel[]> {
     const entities = await this.repo.find();

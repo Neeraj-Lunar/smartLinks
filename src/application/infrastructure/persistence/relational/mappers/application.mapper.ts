@@ -1,7 +1,6 @@
 import { ApplicationEntity } from '../entities/application.entity';
 import { Platform } from 'src/shared/enums/platform.enum';
 import { StatusEnums } from 'src/shared/enums/status.enum';
-import { SdkIntegrationPlatform } from 'src/application/enums/sdk-integration-platform.enum';
 import { ApplicationModel } from 'src/application/domain/applications.model';
 
 export class ApplicationMapper {
@@ -12,8 +11,10 @@ export class ApplicationMapper {
     domain.os = raw.os as Platform;
     domain.status = raw.status as StatusEnums;
     domain.packageId = raw.packageId;
-    domain.sdkKey = raw.sdkKey ?? null;
-    domain.sdkList = (raw.sdkList ?? []) as SdkIntegrationPlatform[];
+    domain.projectId = raw.projectId;
+    if(raw.project) {
+      domain.project = raw.project;
+    }
     domain.imageUrl = raw.imageUrl ?? null;
     domain.storeUrl = raw.storeUrl ?? null;
     domain.category = raw.category ?? null;
@@ -33,8 +34,7 @@ export class ApplicationMapper {
     entity.os = domain.os;
     entity.status = domain.status;
     entity.packageId = domain.packageId;
-    entity.sdkKey = domain.sdkKey;
-    entity.sdkList = domain.sdkList;
+    entity.projectId = domain.projectId;
     entity.imageUrl = domain.imageUrl;
     entity.storeUrl = domain.storeUrl;
     entity.category = domain.category;

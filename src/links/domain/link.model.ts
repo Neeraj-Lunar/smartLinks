@@ -1,4 +1,5 @@
 import { Expose } from 'class-transformer';
+import { DomainModel } from 'src/domains/domain/domain.model';
 import { TemplateModel } from 'src/templates/domain/template.model';
 
 export class LinkModel {
@@ -9,7 +10,10 @@ export class LinkModel {
   name: string;
 
   @Expose()
-  domainName: string;
+  domainId: number;
+
+  @Expose()
+  domainDetails?: DomainModel | null;
 
   @Expose()
   shortUrl: string | null;

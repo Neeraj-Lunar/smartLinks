@@ -17,18 +17,37 @@ export class PgLinkRepository implements LinkRepository {
   async create(link: LinkModel): Promise<LinkModel> {
     const persistenceModel = LinkMapper.toPersistence(link);
     const entity = this.repo.create(persistenceModel);
+  
     const saved = await this.repo.save(entity);
-    return LinkMapper.toDomain(saved);
+  
+    if (!saved?.id) {
+      throw new Error('Link creation failed: could not get ID after save');
+    }
+  
+    const fullEntity = await this.repo.findOne({
+      where: { id: saved.id },
+      relations: ['domainDetails'],
+    });
+  
+    if (!fullEntity) {
+      throw new Error(`Link with ID ${saved.id} not found after creation`);
+    }
+  
+    return LinkMapper.toDomain(fullEntity);
   }
 
-  async update(id: number, updates: Omit<Partial<LinkModel>, 'template'>): Promise<LinkModel | null> {
+  async update(id: number, updates: Omit<Partial<LinkModel>, 'domainDetails' | 'template'>): Promise<LinkModel | null> {
     await this.repo.update(id, updates);
     const updated = await this.repo.findOneBy({ id });
     return updated ? LinkMapper.toDomain(updated) : null;
   }
   
   async findById(id: number): Promise<LinkModel | null> {
-    const entity = await this.repo.findOneBy({ id } as any);
+    const entity = await this.repo.findOne({
+      where: { id },
+      relations: ['domainDetails', 'template', 'template.androidApp', 'template.iosApp'],
+    });
+  
     return entity ? LinkMapper.toDomain(entity) : null;
   }
 
@@ -40,7 +59,7 @@ export class PgLinkRepository implements LinkRepository {
     const entity = options?.withRelations
       ? await this.repo.findOne({
           where: cleanedFilter,
-          relations: ['template','template.androidApp', 'template.iosApp'],
+          relations: ['domainDetails','template','template.androidApp', 'template.iosApp'],
         })
       : await this.repo.findOneBy(cleanedFilter);
   
@@ -50,7 +69,9 @@ export class PgLinkRepository implements LinkRepository {
 
 
   async find(): Promise<LinkModel[]> {
-    const entities = await this.repo.find();
+    const entities = await this.repo.find({
+      relations: ['domainDetails'],
+    })
     return entities.map((entity) => LinkMapper.toDomain(entity));
   }
 

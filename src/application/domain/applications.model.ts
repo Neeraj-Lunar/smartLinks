@@ -1,7 +1,7 @@
 import { Expose } from 'class-transformer';
 import { StatusEnums } from '../../shared/enums/status.enum';
 import { Platform } from '../../shared/enums/platform.enum';
-import { SdkIntegrationPlatform } from '../enums/sdk-integration-platform.enum';
+import { ProjectModel } from 'src/projects/domain/project.model';
 
 export class ApplicationModel {
   @Expose()
@@ -20,10 +20,10 @@ export class ApplicationModel {
   packageId: string;
 
   @Expose()
-  sdkKey: string | null;
+  projectId: number;
 
   @Expose()
-  sdkList: SdkIntegrationPlatform[];
+  project?: ProjectModel | null;
 
   @Expose()
   imageUrl: string | null;

@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
 
 export class CreateApplicationsTable1748542678274 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -11,6 +11,11 @@ export class CreateApplicationsTable1748542678274 implements MigrationInterface 
           isPrimary: true,
           isGenerated: true,
           generationStrategy: 'increment',
+          isNullable: false,
+        },
+        {
+          name: 'project_id',
+          type: 'int',
           isNullable: false,
         },
         {
@@ -31,16 +36,6 @@ export class CreateApplicationsTable1748542678274 implements MigrationInterface 
         {
           name: 'package_id',
           type: 'varchar',
-          isNullable: false,
-        },
-        {
-          name: 'sdk_key',
-          type: 'varchar',
-          isNullable: false,
-        },
-        {
-          name: 'sdk_list',
-          type: 'text[]',
           isNullable: false,
         },
         {
@@ -70,9 +65,25 @@ export class CreateApplicationsTable1748542678274 implements MigrationInterface 
         },
       ],
     }));
+
+    await queryRunner.createForeignKey('applications', new TableForeignKey({
+      columnNames: ['project_id'],
+      referencedTableName: 'projects',
+      referencedColumnNames: ['id'],
+      onDelete: 'CASCADE',
+    }));
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    const table = await queryRunner.getTable('applications');
+    if (table) {
+      const foreignKey = table.foreignKeys.find(
+        fk => fk.columnNames.includes('Project_id'),
+      );
+      if (foreignKey) {
+        await queryRunner.dropForeignKey('applications', foreignKey);
+      }
+    }
     await queryRunner.dropTable('applications');
   }
 }

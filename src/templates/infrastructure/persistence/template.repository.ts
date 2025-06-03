@@ -8,5 +8,5 @@ export abstract class TemplateRepository {
   abstract update(id: TemplateModel['id'], updates: Partial<TemplateModel>): Promise<TemplateModel | null>;
   abstract delete(id: TemplateModel['id']): Promise<void>;
   abstract findById(id: TemplateModel['id']): Promise<TemplateModel | null>;
-    abstract find(): Promise<TemplateModel[] | null>;
+  abstract find(): Promise<TemplateModel[] | null>;
 }

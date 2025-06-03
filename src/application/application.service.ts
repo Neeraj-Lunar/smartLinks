@@ -7,13 +7,18 @@ import * as appStore from 'app-store-scraper';
 import gplay from 'google-play-scraper';
 import { Platform } from '../shared/enums/platform.enum';
 import { AppData } from './interface/app-data.interface';
+import { DomainService } from 'src/domains/domains.service';
+import { DomainModel } from 'src/domains/domain/domain.model';
 
 @Injectable()
 export class ApplicationService {
-  constructor(private readonly applicationRepo: ApplicationRepository) {}
+  constructor(
+    private readonly applicationRepo: ApplicationRepository,
+    private readonly domainService: DomainService
+  ) {}
 
   async create(createApplicationDto: CreateApplicationDto): Promise<ApplicationModel> {
-    const existing = await this.applicationRepo.findByPackageId(createApplicationDto.packageId);
+    const existing = await this.applicationRepo.findOne({packageId: createApplicationDto.packageId});
     if (existing) {
       throw new BadRequestException(`Application already exists.`);
     }
@@ -58,6 +63,15 @@ export class ApplicationService {
       throw new NotFoundException(`Application not found.`);
     }
     return app;
+  }
+
+  async getAppDomain(cond: any): Promise<DomainModel> {
+    const app = await this.applicationRepo.findOne(cond, { withRelations: true });
+    if (!app) {
+      throw new NotFoundException(`Application not found.`);
+    }
+    const domain = await this.domainService.findByCond({projectId: app.projectId})
+    return domain;
   }
 
   async update(id:string, updateApplicationDto: UpdateApplicationDto): Promise<ApplicationModel> {

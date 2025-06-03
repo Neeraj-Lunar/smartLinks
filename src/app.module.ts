@@ -13,6 +13,8 @@ import { MongooseConfigService } from './database/mongoose-config.service';
 import { TemplateModule } from './templates/templates.module';
 import { ApplicationModule } from './application/application.module';
 import { LinkModule } from './links/links.module';
+import { ProjectModule } from './projects/projects.module';
+import { DomainModule } from './domains/domains.module';
 
 
 const infrastructureDatabaseModule = (databaseConfig() as DatabaseConfig).isDocumentDatabase
@@ -40,6 +42,8 @@ const infrastructureDatabaseModule = (databaseConfig() as DatabaseConfig).isDocu
     }),
     infrastructureDatabaseModule,
     HomeModule,
+    ProjectModule,
+    DomainModule,
     ApplicationModule,
     TemplateModule,
     LinkModule

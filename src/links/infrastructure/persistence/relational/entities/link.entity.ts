@@ -1,3 +1,4 @@
+import { DomainEntity } from 'src/domains/infrastructure/persistence/relational/entities/domain.entity';
 import { TemplateEntity } from 'src/templates/infrastructure/persistence/relational/entities/template.entity';
 import {
   Entity,
@@ -18,8 +19,12 @@ export class LinkEntity {
   @Column({ type: 'varchar', nullable: false })
   name: string;
 
-  @Column({ name: 'domain_name', type: 'varchar', nullable: false })
-  domainName: string;
+  @Column({ name: 'domain_id', type: 'varchar', nullable: false })
+  domainId: number;
+
+  @ManyToOne(() => DomainEntity)
+  @JoinColumn({ name: 'domain_id' })
+  domainDetails: DomainEntity;
 
   @Column({ name: 'short_url', type: 'varchar', nullable: true, unique: true })
   shortUrl: string | null;
