@@ -3,7 +3,7 @@ import {
 } from '@nestjs/common';
 import { RelationalLinkPersistenceModule } from './infrastructure/persistence/relational/relational-persistence.module';
 import { LinkService } from './links.service';
-import { LinkController } from './link.controller';
+import { LinkController } from './links.controller';
 import { ApplicationModule } from 'src/application/application.module';
 
 const infrastructurePersistenceModule = RelationalLinkPersistenceModule

@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, BadRequestException, InternalServerError
 import { ApplicationRepository } from './infrastructure/persistence/application.repository';
 import { CreateApplicationDto } from './dto/create-application-dto';
 import { ApplicationModel } from './domain/applications.model';
-import { UpdateApplicationDto } from './dto/update-appplication-dto';
+import { UpdateApplicationDto } from './dto/update-application-dto';
 import * as appStore from 'app-store-scraper';
 import gplay from 'google-play-scraper';
 import { Platform } from '../shared/enums/platform.enum';

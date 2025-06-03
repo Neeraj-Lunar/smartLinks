@@ -15,14 +15,14 @@ import { ProjectService } from './projects.service';
 
 @Controller('project')
 export class ProjectController {
-  constructor(private readonly ProjectService: ProjectService) {}
+  constructor(private readonly projectService: ProjectService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(
     @Body() createProjectDto: CreateProjectDto,
   ) {
-    const applications = await this.ProjectService.create(createProjectDto);
+    const applications = await this.projectService.create(createProjectDto);
     return {
       result : applications
     }
@@ -30,7 +30,7 @@ export class ProjectController {
 
   @Get(':id')
   async findById(@Param('id') id: number) {
-    const application = await this.ProjectService.findById(id);
+    const application = await this.projectService.findById(id);
     return {
       result : application
     }
@@ -38,7 +38,7 @@ export class ProjectController {
 
   @Get()
   async findAll() {
-    const applications = await this.ProjectService.find();
+    const applications = await this.projectService.find();
     return {
       result: applications
     }
@@ -49,7 +49,7 @@ export class ProjectController {
     @Param('id') id: number,
     @Body() updateProjectDto: UpdateProjectDto,
   ){
-    const data = await this.ProjectService.update(id, updateProjectDto);
+    const data = await this.projectService.update(id, updateProjectDto);
     return {
       result : data
     }
@@ -57,7 +57,7 @@ export class ProjectController {
 
   @Delete(':id')
   async delete(@Param('id') id: number) {
-    await this.ProjectService.delete(id);
+    await this.projectService.delete(id);
     return {
       message : "Project deleted successfully"
     }

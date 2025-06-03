@@ -21,7 +21,7 @@ export class UpdateApplicationDto {
 
   @IsOptional()
   @IsNumber()
-  projectId: number;
+  projectId?: number;
 
   @IsOptional()
   @IsUrl()

@@ -24,7 +24,7 @@ export class LinkController {
     };
   }
 
-  @Get('getDynamicLink')
+  @Post('getDynamicLink')
   async getLink(
     @Body() data: any,
   ) {
