@@ -2,7 +2,7 @@ import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class DesktopRedirectTemplate {
   @IsBoolean()
-  storeRdt: boolean;
+  storeRdt?: boolean;
 
   @IsOptional()
   @IsString()

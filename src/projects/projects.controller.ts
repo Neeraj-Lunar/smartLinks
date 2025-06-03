@@ -13,7 +13,7 @@ import { UpdateProjectDto } from './dto/update-project-dto';
 import { ProjectService } from './projects.service';
 
 
-@Controller('project')
+@Controller('projects')
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 

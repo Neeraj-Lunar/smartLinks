@@ -12,7 +12,7 @@ import { CreateDomainDto } from './dto/create-domain-dto';
 import { DomainService } from './domains.service';
 import { UpdateDomainDto } from './dto/update-domain-dto';
 
-@Controller('domain')
+@Controller('domains')
 export class DomainController {
   constructor(private readonly domainService: DomainService) {}
 

@@ -11,6 +11,7 @@ import {
 import { LinkService } from './links.service';
 import { CreateLinkDto } from './dto/create-link-dto';
 import { UpdateLinkDto } from './dto/update-link-dto';
+import { GetDynamicLinkDto } from './dto/get-dynamic-link-dto';
 
 @Controller('links')
 export class LinkController {
@@ -26,7 +27,7 @@ export class LinkController {
 
   @Post('getDynamicLink')
   async getLink(
-    @Body() data: any,
+    @Body() data: GetDynamicLinkDto,
   ) {
     const links = await this.linkService.getAppLink(data);
     return {

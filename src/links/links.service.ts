@@ -12,6 +12,7 @@ import { Platform } from 'src/shared/enums/platform.enum';
 import { ApplicationService } from 'src/application/application.service';
 import { LinkMapper } from './infrastructure/persistence/relational/mappers/link.mapper';
 import { DomainMapper } from 'src/domains/infrastructure/persistence/relational/mappers/domain.mapper';
+import { GetDynamicLinkDto } from './dto/get-dynamic-link-dto';
 
 
 @Injectable()
@@ -36,21 +37,26 @@ export class LinkService {
     if (!data.packageId) {
       throw new NotFoundException(`packageId is required`);
     }
-    const appDomain = await this.applicationService.getAppDomain({ packageId: data.package_id });
-    const onlyPackageId = Object.keys(data).length === 1;
+  
+    const appDomain = await this.applicationService.getAppDomain({ packageId: data.packageId });
+    const otherKeys = Object.keys(data).filter(
+      (key) => key !== 'packageId' && data[key] !== null && data[key] !== undefined
+    );
+  
+    const onlyPackageId = otherKeys.length === 0;
+
     if (onlyPackageId) {
       return LinkMapper.toApplicationDomainData(appDomain);
     }
   
-  
-    const linkData = await this.create({...data, domainId:appDomain.id});
+    const linkData = await this.create({ ...data, domainId: appDomain.id });
     return {
       redirectionUrl: linkData.shortUrl,
       linkMeta: {
         name: linkData.name,
         shortUrl: linkData.shortUrl,
-        fullUrl: linkData.fullUrl
-      }
+        fullUrl: linkData.fullUrl,
+      },
     };
   }
 

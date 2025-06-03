@@ -2,14 +2,14 @@ import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class NotInstalledRedirectTemplate {
   @IsBoolean()
-  iosStoreRdt: boolean;
+  iosStoreRdt?: boolean;
 
   @IsOptional()
   @IsString()
   iosUrlRdt?: string | null;
 
   @IsBoolean()
-  androidStoreRdt: boolean;
+  androidStoreRdt?: boolean;
 
   @IsOptional()
   @IsString()

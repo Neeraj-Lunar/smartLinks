@@ -8,6 +8,7 @@ import { AppModule } from './app.module';
 import { ResponseInterceptor } from './utils/response.interceptor';
 import { AllExceptionsFilter } from './utils/exception.filter';
 import * as morgan from 'morgan';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
@@ -36,6 +37,15 @@ async function bootstrap() {
   );
   app.useGlobalInterceptors(new ResponseInterceptor());
   app.useGlobalFilters(new AllExceptionsFilter());
+
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('Smart Link API')
+    .setDescription('API documentation for the Smart Link service')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('docs', app, document);
 
   await app.listen(configService.getOrThrow('app.port', { infer: true }),'0.0.0.0');
   console.log('listening on port', configService.get('app.port', { infer: true }));
