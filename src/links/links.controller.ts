@@ -36,7 +36,7 @@ export class LinkController {
     };
   }
 
-  @Get('resolve/:shortCode')
+  @Post('resolve/:shortCode')
   async resolveLink(
     @Param('shortCode') shortUrl: string,
     @Body() deviceInfo: ResolveUrlDto,
