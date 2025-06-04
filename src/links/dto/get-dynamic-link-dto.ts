@@ -14,7 +14,7 @@ export class GetDynamicLinkDto {
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional({ example: 'Campaign Name' })
+  @ApiPropertyOptional({ example: 'Link Name' })
   name?: string;
 
   @IsOptional()
@@ -26,9 +26,4 @@ export class GetDynamicLinkDto {
   @IsNumber()
   @ApiPropertyOptional({ example: 1 })
   templateId?: number;
-
-  @IsOptional()
-  @IsUrl()
-  @ApiPropertyOptional({ example: 'https://example.com/fallback' })
-  fullUrl?: string;
 }

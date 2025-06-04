@@ -12,6 +12,7 @@ import { LinkService } from './links.service';
 import { CreateLinkDto } from './dto/create-link-dto';
 import { UpdateLinkDto } from './dto/update-link-dto';
 import { GetDynamicLinkDto } from './dto/get-dynamic-link-dto';
+import { ResolveUrlDto } from './dto/resolve-url-dto';
 
 @Controller('links')
 export class LinkController {
@@ -38,7 +39,7 @@ export class LinkController {
   @Get('resolve/:shortCode')
   async resolveLink(
     @Param('shortCode') shortUrl: string,
-    @Body() deviceInfo: any,
+    @Body() deviceInfo: ResolveUrlDto,
   ) {
     const links = await this.linkService.getRedirectionInfo(shortUrl, deviceInfo);
     return {
