@@ -3,10 +3,15 @@ import { DomainRepository } from './infrastructure/persistence/domain.repository
 import { CreateDomainDto } from './dto/create-domain-dto';
 import { DomainModel } from './domain/domain.model';
 import { UpdateDomainDto } from './dto/update-domain-dto';
+import { ApplicationService } from 'src/application/application.service';
 
 @Injectable()
 export class DomainService {
-  constructor(private readonly domainRepo: DomainRepository) {}
+  constructor(
+    private readonly domainRepo: DomainRepository,
+    private readonly applicationService: ApplicationService
+
+  ) {}
 
   async create(createDomainDto: CreateDomainDto): Promise<DomainModel> {
     const existing = await this.domainRepo.findOne({ domainName :createDomainDto.domainName});
@@ -32,10 +37,25 @@ export class DomainService {
     return org;
   }
 
+  async getAppDomainByPackageId(packageId: string): Promise<DomainModel> {
+    if (!packageId) {
+      throw new NotFoundException(`packageId is required`);
+    }
+    const app = await this.applicationService.getAppDataByCond({packageId}, { withRelations: true });
+    if (!app) {
+      throw new NotFoundException(`Application not found`);
+    }
+    const domain = await this.domainRepo.findOne({projectId: app.projectId})
+    if (!domain) {
+      throw new NotFoundException(`Domains not found`);
+    }
+    return domain;
+  }
+
   async update(id:number, updateDomainDto: UpdateDomainDto): Promise<DomainModel> {
     const existing = await this.domainRepo.findById(id);
     if (!existing) {
-      throw new NotFoundException(`Domain not found.`);
+      throw new NotFoundException(`Domain not found`);
     }
     const updated = await this.domainRepo.update(id, updateDomainDto);
     if (!updated) {

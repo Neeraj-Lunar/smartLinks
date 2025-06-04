@@ -7,14 +7,11 @@ import * as appStore from 'app-store-scraper';
 import gplay from 'google-play-scraper';
 import { Platform } from '../shared/enums/platform.enum';
 import { AppData } from './interface/app-data.interface';
-import { DomainService } from 'src/domains/domains.service';
-import { DomainModel } from 'src/domains/domain/domain.model';
 
 @Injectable()
 export class ApplicationService {
   constructor(
     private readonly applicationRepo: ApplicationRepository,
-    private readonly domainService: DomainService
   ) {}
 
   async create(createApplicationDto: CreateApplicationDto): Promise<ApplicationModel> {
@@ -65,13 +62,12 @@ export class ApplicationService {
     return app;
   }
 
-  async getAppDomain(cond: any): Promise<DomainModel> {
-    const app = await this.applicationRepo.findOne(cond, { withRelations: true });
+  async getAppDataByCond(cond: any, options: any): Promise<ApplicationModel> {
+    const app = await this.applicationRepo.findOne(cond, options);
     if (!app) {
       throw new NotFoundException(`Application not found.`);
     }
-    const domain = await this.domainService.findByCond({projectId: app.projectId})
-    return domain;
+    return app;
   }
 
   async update(id:string, updateApplicationDto: UpdateApplicationDto): Promise<ApplicationModel> {
@@ -127,7 +123,6 @@ export class ApplicationService {
       storeUrl,
     };
   }
-
 
   async getAppMetadata(storeUrl: string): Promise<AppData> {
     if (!storeUrl || typeof storeUrl !== 'string') {

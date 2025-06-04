@@ -1,4 +1,5 @@
 import {
+  forwardRef,
   Module
 } from '@nestjs/common';
 import { DatabaseConfig } from '../database/config/database-config.type';
@@ -15,7 +16,8 @@ import { DomainModule } from 'src/domains/domains.module';
 const infrastructurePersistenceModule = RelationalApplicationPersistenceModule
 
 @Module({
-  imports: [infrastructurePersistenceModule, DomainModule],
+  imports: [infrastructurePersistenceModule
+  ],
   controllers: [ApplicationController],
   providers: [ApplicationService],
   exports: [ApplicationService, infrastructurePersistenceModule],

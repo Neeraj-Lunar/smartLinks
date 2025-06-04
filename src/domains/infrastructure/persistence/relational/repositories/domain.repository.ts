@@ -35,7 +35,7 @@ export class PgDomainRepository implements DomainRepository {
   async findById(id: number): Promise<DomainModel | null> {
     const entity = await this.repo.findOne({
       where: { id },
-      relations: ['organization'],
+      relations: ['project'],
     });
     return entity ? DomainMapper.toDomain(entity) : null;
   }

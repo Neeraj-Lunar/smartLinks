@@ -35,6 +35,14 @@ export class DomainController {
     }
   }
 
+  @Get('byPackageId/:packageId')
+  async findByPacakageId(@Param('packageId') id: string) {
+    const application = await this.domainService.getAppDomainByPackageId(id);
+    return {
+      result : application
+    }
+  }
+
   @Get()
   async findAll() {
     const applications = await this.domainService.find();

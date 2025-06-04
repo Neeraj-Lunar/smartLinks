@@ -9,17 +9,15 @@ import { CreateLinkDto } from './dto/create-link-dto';
 import { UpdateLinkDto } from './dto/update-link-dto';
 import { nanoid } from 'nanoid';
 import { Platform } from 'src/shared/enums/platform.enum';
-import { ApplicationService } from 'src/application/application.service';
 import { LinkMapper } from './infrastructure/persistence/relational/mappers/link.mapper';
-import { DomainMapper } from 'src/domains/infrastructure/persistence/relational/mappers/domain.mapper';
-import { GetDynamicLinkDto } from './dto/get-dynamic-link-dto';
+import { DomainService } from 'src/domains/domains.service';
 
 
 @Injectable()
 export class LinkService {
   constructor(
     private readonly linkRepo: LinkRepository,
-    private readonly applicationService: ApplicationService,
+     private readonly domainService: DomainService,
   ) {}
 
   async create(dto: CreateLinkDto): Promise<LinkModel> {
@@ -34,17 +32,12 @@ export class LinkService {
   }
 
   async getAppLink(data: any) {
-    if (!data.packageId) {
-      throw new NotFoundException(`packageId is required`);
-    }
-  
-    const appDomain = await this.applicationService.getAppDomain({ packageId: data.packageId });
+    const appDomain = await this.domainService.getAppDomainByPackageId(data.packageId);
     const otherKeys = Object.keys(data).filter(
       (key) => key !== 'packageId' && data[key] !== null && data[key] !== undefined
     );
   
     const onlyPackageId = otherKeys.length === 0;
-
     if (onlyPackageId) {
       return LinkMapper.toApplicationDomainData(appDomain);
     }
