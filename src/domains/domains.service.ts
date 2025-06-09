@@ -16,7 +16,7 @@ export class DomainService {
   async create(createDomainDto: CreateDomainDto): Promise<DomainModel> {
     const existing = await this.domainRepo.findOne({ domainName :createDomainDto.domainName});
     if (existing) {
-      throw new BadRequestException(`Domain already exists.`);
+      throw new BadRequestException(`Domain already exists`);
     }
     return this.domainRepo.create(createDomainDto);
   }
@@ -24,7 +24,7 @@ export class DomainService {
   async find(): Promise<DomainModel[]> {
     const org = await this.domainRepo.find();
     if (!org) {
-      throw new NotFoundException(`Domain not found.`);
+      throw new NotFoundException(`Domain not found`);
     }
     return org;
   }
@@ -32,7 +32,7 @@ export class DomainService {
   async findById(id: number): Promise<DomainModel> {
     const org = await this.domainRepo.findById(id);
     if (!org) {
-      throw new NotFoundException(`Domain not found.`);
+      throw new NotFoundException(`Domain not found`);
     }
     return org;
   }
@@ -67,7 +67,7 @@ export class DomainService {
   async findByCond(cond: Partial<DomainModel>): Promise<DomainModel> {
     const org = await this.domainRepo.findOne(cond, { withRelations: true} );
     if (!org) {
-      throw new NotFoundException(`Domain not found.`);
+      throw new NotFoundException(`Domain not found`);
     }
     return org;
   }
@@ -75,7 +75,7 @@ export class DomainService {
   async delete(id: number): Promise<void> {
     const org = await this.domainRepo.findById(id);
     if (!org) {
-      throw new NotFoundException(`Domain not found.`);
+      throw new NotFoundException(`Domain not found`);
     }
     await this.domainRepo.delete(id);
   }

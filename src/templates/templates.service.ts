@@ -62,7 +62,7 @@ export class TemplateService {
   async find(): Promise<TemplateModel[]> {
     const app = await this.templateRepo.find();
     if (!app) {
-      throw new NotFoundException(`Application not found.`);
+      throw new NotFoundException(`Application not found`);
     }
     return app;
   }

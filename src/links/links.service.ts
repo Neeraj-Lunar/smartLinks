@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -7,10 +8,9 @@ import { LinkRepository } from './infrastructure/persistence/link.repository';
 import { LinkModel } from './domain/link.model';
 import { CreateLinkDto } from './dto/create-link-dto';
 import { UpdateLinkDto } from './dto/update-link-dto';
-import { nanoid } from 'nanoid';
 import { Platform } from 'src/shared/enums/platform.enum';
-import { LinkMapper } from './infrastructure/persistence/relational/mappers/link.mapper';
 import { DomainService } from 'src/domains/domains.service';
+import { createShortCode } from 'src/utils/short-code.util';
 
 
 @Injectable()
@@ -20,46 +20,52 @@ export class LinkService {
      private readonly domainService: DomainService,
   ) {}
 
-  async create(dto: CreateLinkDto): Promise<LinkModel> {
-    const shortUrl = await this.generateUniqueShortUrl();
+  async create(dto: CreateLinkDto) {
+    if (dto.domainId && dto.packageId) {
+      throw new BadRequestException(`Provide only one of domainId or packageId, not both`);
+    }
+    if (dto.domainId) {
+      return this.createLinkWithDomainId(dto);
+    }
+    if (dto.packageId) {
+      return this.createLinkWithPackageId(dto);
+    }
+    throw new BadRequestException(`Either domainId or packageId is required`);
+  }
+  
+  async createLinkWithDomainId(dto: CreateLinkDto): Promise<LinkModel> {
+    const shortUrl = await this.generateUniqueShortUrlWithCheck();
     const fullUrl = this.buildFullUrl(shortUrl, dto.params);
-
-    return this.linkRepo.create({
+  
+    return await this.linkRepo.create({
       ...dto,
       shortUrl,
       fullUrl,
     });
   }
 
-  async getAppLink(data: any) {
-    const appDomain = await this.domainService.getAppDomainByPackageId(data.packageId);
-    const otherKeys = Object.keys(data).filter(
-      (key) => key !== 'packageId' && data[key] !== null && data[key] !== undefined
-    );
-  
-    const onlyPackageId = otherKeys.length === 0;
-    if (onlyPackageId) {
-      return LinkMapper.toApplicationDomainData(appDomain);
-    }
-  
-    const linkData = await this.create({ ...data, domainId: appDomain.id });
+  async createLinkWithPackageId(data: CreateLinkDto) {
+    const appDomain = await this.domainService.getAppDomainByPackageId(data.packageId);  
+    const linkData = await this.createLinkWithDomainId({ ...data, domainId: appDomain.id });
     return {
       redirectionUrl: linkData.shortUrl,
-      linkMeta: {
+      metaData: {
         name: linkData.name,
         shortUrl: linkData.shortUrl,
         fullUrl: linkData.fullUrl,
+        params: linkData.params
       },
     };
   }
 
-
-  private async generateUniqueShortUrl(): Promise<string> {
-    const short = nanoid(7);
-    const exists = await this.linkRepo.findOne({ shortUrl: short });
-    if (exists) return this.generateUniqueShortUrl();
-
-    return short;
+  private async generateUniqueShortUrlWithCheck(): Promise<string> {
+    let code: string;
+    let exists = true;
+    do {
+      code = createShortCode();
+      exists = !!(await this.linkRepo.findOne({ shortUrl: code }));
+    } while (exists);
+    return code;
   }
 
   private buildFullUrl(short: string, params?: Record<string, any>): string {
@@ -69,10 +75,15 @@ export class LinkService {
     return `${short}?${query}`;
   }
 
+  async extractParameters(shortUrl: string) {
+    const linkDetails = await this.linkRepo.findOne({shortUrl: shortUrl});
+    return linkDetails?.params;
+  }
+
   async find(): Promise<LinkModel[]> {
     const links = await this.linkRepo.find();
     if (!links || links.length === 0) {
-      throw new NotFoundException(`No links found.`);
+      throw new NotFoundException(`No links found`);
     }
     return links;
   }
@@ -122,7 +133,7 @@ export class LinkService {
   async findById(id: number): Promise<LinkModel> {
     const link = await this.linkRepo.findById(id);
     if (!link) {
-      throw new NotFoundException(`Link with ID ${id} not found.`);
+      throw new NotFoundException(`Link with ID ${id} not found`);
     }
     return link;
   }
@@ -130,13 +141,13 @@ export class LinkService {
   async update(id: number, updateLinkDto: UpdateLinkDto): Promise<LinkModel> {
     const existing = await this.linkRepo.findById(id);
     if (!existing) {
-      throw new NotFoundException(`Link with ID ${id} not found.`);
+      throw new NotFoundException(`Link with ID ${id} not found`);
     }
 
     const updated = await this.linkRepo.update(id, updateLinkDto);
 
     if (!updated) {
-      throw new InternalServerErrorException('Failed to update link.');
+      throw new InternalServerErrorException('Failed to update link');
     }
 
     return updated;
@@ -145,7 +156,7 @@ export class LinkService {
   async delete(id: number): Promise<void> {
     const link = await this.linkRepo.findById(id);
     if (!link) {
-      throw new NotFoundException(`Link with ID ${id} not found.`);
+      throw new NotFoundException(`Link with ID ${id} not found`);
     }
     await this.linkRepo.delete(id);
   }

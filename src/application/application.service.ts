@@ -17,7 +17,7 @@ export class ApplicationService {
   async create(createApplicationDto: CreateApplicationDto): Promise<ApplicationModel> {
     const existing = await this.applicationRepo.findOne({packageId: createApplicationDto.packageId});
     if (existing) {
-      throw new BadRequestException(`Application already exists.`);
+      throw new BadRequestException(`Application already exists`);
     }
     return this.applicationRepo.create(createApplicationDto);
   }
@@ -49,7 +49,7 @@ export class ApplicationService {
   async find(): Promise<ApplicationModel[]> {
     const app = await this.applicationRepo.find();
     if (!app) {
-      throw new NotFoundException(`Application not found.`);
+      throw new NotFoundException(`Application not found`);
     }
     return app;
   }
@@ -57,7 +57,7 @@ export class ApplicationService {
   async findById(id: number): Promise<ApplicationModel> {
     const app = await this.applicationRepo.findById(id);
     if (!app) {
-      throw new NotFoundException(`Application not found.`);
+      throw new NotFoundException(`Application not found`);
     }
     return app;
   }
@@ -65,7 +65,7 @@ export class ApplicationService {
   async getAppDataByCond(cond: any, options: any): Promise<ApplicationModel> {
     const app = await this.applicationRepo.findOne(cond, options);
     if (!app) {
-      throw new NotFoundException(`Application not found.`);
+      throw new NotFoundException(`Application not found`);
     }
     return app;
   }
@@ -73,7 +73,7 @@ export class ApplicationService {
   async update(id:string, updateApplicationDto: UpdateApplicationDto): Promise<ApplicationModel> {
     const existing = await this.applicationRepo.findById(id);
     if (!existing) {
-      throw new NotFoundException(`Application not found.`);
+      throw new NotFoundException(`Application not found`);
     }
     const updated = await this.applicationRepo.update(id, updateApplicationDto);
     if (!updated) {
@@ -85,7 +85,7 @@ export class ApplicationService {
   async delete(id: number): Promise<void> {
     const app = await this.applicationRepo.findById(id);
     if (!app) {
-      throw new NotFoundException(`Application not found.`);
+      throw new NotFoundException(`Application not found`);
     }
     await this.applicationRepo.delete(id);
   }

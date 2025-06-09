@@ -9,14 +9,22 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { LinkService } from './links.service';
-import { CreateLinkDto } from './dto/create-link-dto';
 import { UpdateLinkDto } from './dto/update-link-dto';
-import { GetDynamicLinkDto } from './dto/get-dynamic-link-dto';
 import { ResolveUrlDto } from './dto/resolve-url-dto';
+import { CreateLinkDto } from './dto/create-link-dto';
 
 @Controller('links')
 export class LinkController {
   constructor(private readonly linkService: LinkService) {}
+
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() createLinkDto: CreateLinkDto) {
+    const link = await this.linkService.create(createLinkDto);
+    return {
+      result: link,
+    };
+  }
 
   @Get()
   async findAll() {
@@ -26,33 +34,22 @@ export class LinkController {
     };
   }
 
-  @Post('getDynamicLink')
-  async getLink(
-    @Body() data: GetDynamicLinkDto,
+  @Get('/parameters/:shortUrl')
+  async extractLinkParameters(
+    @Param('shortUrl') shortUrl: string,
   ) {
-    const links = await this.linkService.getAppLink(data);
-    return {
-      result: links,
-    };
+    const result = await this.linkService.extractParameters(shortUrl);
+    return { result };
   }
 
-  @Post('resolve/:shortCode')
+  @Post('resolve/:shortUrl')
   async resolveLink(
-    @Param('shortCode') shortUrl: string,
+    @Param('shortUrl') shortUrl: string,
     @Body() deviceInfo: ResolveUrlDto,
   ) {
     const links = await this.linkService.getRedirectionInfo(shortUrl, deviceInfo);
     return {
       result: links,
-    };
-  }
-
-  @Post()
-  @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createLinkDto: CreateLinkDto) {
-    const link = await this.linkService.create(createLinkDto);
-    return {
-      result: link,
     };
   }
 

@@ -35,7 +35,7 @@ export class ProjectService {
   async find(): Promise<ProjectModel[]> {
     const org = await this.ProjectRepo.find();
     if (!org) {
-      throw new NotFoundException(`Project not found.`);
+      throw new NotFoundException(`Project not found`);
     }
     return org;
   }
@@ -43,7 +43,7 @@ export class ProjectService {
   async findById(id: number): Promise<ProjectModel> {
     const org = await this.ProjectRepo.findById(id);
     if (!org) {
-      throw new NotFoundException(`Project not found.`);
+      throw new NotFoundException(`Project not found`);
     }
     return org;
   }
@@ -51,7 +51,7 @@ export class ProjectService {
   async update(id:number, updateProjectDto: UpdateProjectDto): Promise<ProjectModel> {
     const existing = await this.ProjectRepo.findById(id);
     if (!existing) {
-      throw new NotFoundException(`Project not found.`);
+      throw new NotFoundException(`Project not found`);
     }
     const updated = await this.ProjectRepo.update(id, updateProjectDto);
     if (!updated) {
@@ -63,7 +63,7 @@ export class ProjectService {
   async delete(id: number): Promise<void> {
     const org = await this.ProjectRepo.findById(id);
     if (!org) {
-      throw new NotFoundException(`Project not found.`);
+      throw new NotFoundException(`Project not found`);
     }
     await this.ProjectRepo.delete(id);
   }
