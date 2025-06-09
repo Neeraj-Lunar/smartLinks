@@ -1,5 +1,5 @@
+import { ApplicationEntity } from 'src/application/infrastructure/persistence/relational/entities/application.entity';
 import { DomainEntity } from 'src/domains/infrastructure/persistence/relational/entities/domain.entity';
-import { TemplateEntity } from 'src/templates/infrastructure/persistence/relational/entities/template.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -16,8 +16,8 @@ export class LinkEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', nullable: false })
-  name: string;
+  @Column({ type: 'varchar', nullable: true })
+  name: string | null;
 
   @Column({ name: 'domain_id', type: 'varchar', nullable: false })
   domainId: number;
@@ -32,12 +32,19 @@ export class LinkEntity {
   @Column({ name: 'full_url', type: 'varchar', nullable: true, unique: true })
   fullUrl: string | null;
 
-  @Column({ name: 'template_id', type: 'int', nullable: false })
-  templateId: number;
+  @Column({ name: 'android_app_id', type: 'int', nullable: false })
+  androidAppId: number;
 
-  @ManyToOne(() => TemplateEntity)
-  @JoinColumn({ name: 'template_id' })
-  template: TemplateEntity;
+  @ManyToOne(() => ApplicationEntity)
+  @JoinColumn({ name: 'android_app_id' })
+  androidApp: ApplicationEntity;
+
+  @Column({ name: 'ios_app_id', type: 'int', nullable: false })
+  iosAppId: number;
+
+  @ManyToOne(() => ApplicationEntity)
+  @JoinColumn({ name: 'ios_app_id' })
+  iosApp: ApplicationEntity;
 
   @Column({ type: 'jsonb', nullable: true })
   params: Record<string, any> | null;

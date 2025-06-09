@@ -16,8 +16,8 @@ export class PgDomainRepository implements DomainRepository {
     private readonly repo: Repository<DomainEntity>,
   ) {}
 
-  async create(template: DomainModel): Promise<DomainModel> {
-    const persistenceModel = DomainMapper.toPersistence(template);
+  async create(domainData: DomainModel): Promise<DomainModel> {
+    const persistenceModel = DomainMapper.toPersistence(domainData);
     const entity = this.repo.create(persistenceModel);
     const saved = await this.repo.save(entity);
     return DomainMapper.toDomain(saved);

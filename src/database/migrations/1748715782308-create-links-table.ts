@@ -17,7 +17,17 @@ export class CreateLinksTable1748715782308 implements MigrationInterface {
           {
             name: 'name',
             type: 'varchar',
-            isNullable: false,
+            isNullable: true,
+          },
+           {
+            name: 'android_app_id',
+            type: 'int',
+            isNullable: true,
+          },
+          {
+            name: 'ios_app_id',
+            type: 'int',
+            isNullable: true,
           },
           {
             name: 'domain_id',
@@ -34,11 +44,6 @@ export class CreateLinksTable1748715782308 implements MigrationInterface {
             name: 'full_url',
             type: 'varchar',
             isNullable: true,
-          },
-          {
-            name: 'template_id',
-            type: 'int',
-            isNullable: false,
           },
           {
             name: 'params',
@@ -65,12 +70,20 @@ export class CreateLinksTable1748715782308 implements MigrationInterface {
       true,
     );
 
+    await queryRunner.query('CREATE INDEX "IDX_links_short_url" ON "links" ("short_url")');
+
     await queryRunner.createForeignKeys('links', [
       new TableForeignKey({
-        columnNames: ['template_id'],
+        columnNames: ['android_app_id'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'templates',
-        onDelete: 'CASCADE',
+        referencedTableName: 'applications',
+        onDelete: 'SET NULL',
+      }),
+      new TableForeignKey({
+        columnNames: ['ios_app_id'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'applications',
+        onDelete: 'SET NULL',
       }),
       new TableForeignKey({
         columnNames: ['domain_id'],
@@ -85,7 +98,7 @@ export class CreateLinksTable1748715782308 implements MigrationInterface {
     const table = await queryRunner.getTable('links');
     if (table) {
       const foreignKeys = table.foreignKeys.filter(fk =>
-        ['template_id', 'domain_id'].includes(fk.columnNames[0])
+        ['android_app_id', 'ios_app_id' ,'domain_id'].includes(fk.columnNames[0])
       );
       for (const fk of foreignKeys) {
         await queryRunner.dropForeignKey('links', fk);

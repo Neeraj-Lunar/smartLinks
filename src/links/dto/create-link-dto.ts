@@ -11,21 +11,23 @@ export class CreateLinkDto {
   @IsString()
   @ApiProperty({ description: 'Package ID', example: 'com.example.app' })
   packageId: string;
-  
-  @IsOptional()
-  @IsNumber()
-  @ApiProperty({ description: 'Domain ID', example: '1' })
-  domainId: number;
 
+  @IsOptional()
   @IsString()
+  @ApiProperty({ description: 'Android Package ID', example: 'com.example.app' })
+  iosPackageId: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({ description: 'Ios Package ID', example: 'id123456789' })
+  androidPackageId: string;
+  
+  @IsString()
+  @IsOptional()
   @ApiPropertyOptional({ example: 'Link Name' })
   name: string;
 
   @IsObject()
   @ApiPropertyOptional({ example: { ref: '123', tag: 'abc' } })
   params: object;
-
-  @IsNumber()
-  @ApiPropertyOptional({ example: 1 })
-  templateId: number;
 }

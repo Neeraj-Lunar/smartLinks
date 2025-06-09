@@ -36,7 +36,7 @@ export class PgLinkRepository implements LinkRepository {
     return LinkMapper.toDomain(fullEntity);
   }
 
-  async update(id: number, updates: Omit<Partial<LinkModel>, 'domainDetails' | 'template'>): Promise<LinkModel | null> {
+  async update(id: number, updates: Omit<Partial<LinkModel>, 'domainDetails' | 'androidApp' | 'iosApp'>): Promise<LinkModel | null> {
     await this.repo.update(id, updates);
     const updated = await this.repo.findOneBy({ id });
     return updated ? LinkMapper.toDomain(updated) : null;
@@ -45,7 +45,7 @@ export class PgLinkRepository implements LinkRepository {
   async findById(id: number): Promise<LinkModel | null> {
     const entity = await this.repo.findOne({
       where: { id },
-      relations: ['domainDetails', 'template', 'template.androidApp', 'template.iosApp'],
+      relations: ['domainDetails', 'androidApp', 'iosApp'],
     });
   
     return entity ? LinkMapper.toDomain(entity) : null;
@@ -59,7 +59,7 @@ export class PgLinkRepository implements LinkRepository {
     const entity = options?.withRelations
       ? await this.repo.findOne({
           where: cleanedFilter,
-          relations: ['domainDetails','template','template.androidApp', 'template.iosApp'],
+          relations: ['domainDetails', 'androidApp', 'iosApp'],
         })
       : await this.repo.findOneBy(cleanedFilter);
   

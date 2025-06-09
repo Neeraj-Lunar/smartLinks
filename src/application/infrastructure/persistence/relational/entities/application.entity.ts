@@ -43,6 +43,9 @@ export class ApplicationEntity {
   @Column({ name: 'store_url', type: 'varchar', nullable: true })
   storeUrl: string | null;
 
+  @Column({ name: 'fallback_url', type: 'varchar', nullable: true })
+  fallbackUrl: string | null;
+
   @Column({ type: 'varchar', nullable: true })
   category: string | null;
 

@@ -8,5 +8,6 @@ export abstract class ApplicationRepository {
   abstract delete(id: string | number): Promise<void>;
   abstract findById(id: ApplicationModel['id']): Promise<ApplicationModel | null>;
   abstract findOne(filter: Partial<ApplicationModel>, options?: { withRelations?: boolean }): Promise<ApplicationModel | null>;
+  abstract findAll(filter: Partial<ApplicationModel>, options?: { withRelations?: boolean }): Promise<ApplicationModel[] | null>;
   abstract find(): Promise<ApplicationModel[] | null>;
 }

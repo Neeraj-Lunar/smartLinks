@@ -66,6 +66,14 @@ export class CreateApplicationDto {
   @IsUrl()
   storeUrl: string;
 
+  @ApiProperty({
+    example: 'https://example.com/fallback',
+    description: 'Fallback URL for application',
+  })
+  @IsString()
+  @IsNotEmpty()
+  fallbackUrl: string;
+
   @ApiPropertyOptional({
     example: 'Games',
     description: 'category for the app',

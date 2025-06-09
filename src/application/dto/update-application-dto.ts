@@ -69,6 +69,14 @@ export class UpdateApplicationDto {
   storeUrl?: string;
 
   @ApiPropertyOptional({
+    example: 'https://example.com/fallback',
+    description: 'Fallback URL for application',
+  })
+  @IsString()
+  @IsOptional()
+  fallbackUrl: string;
+
+  @ApiPropertyOptional({
     example: 'Productivity',
     description: 'Updated application category',
   })

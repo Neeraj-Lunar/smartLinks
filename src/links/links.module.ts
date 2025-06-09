@@ -5,10 +5,11 @@ import { RelationalLinkPersistenceModule } from './infrastructure/persistence/re
 import { LinkService } from './links.service';
 import { LinkController } from './links.controller';
 import { DomainModule } from 'src/domains/domains.module';
+import { ApplicationModule } from 'src/application/application.module';
 
 const infrastructurePersistenceModule = RelationalLinkPersistenceModule
 @Module({
-  imports: [infrastructurePersistenceModule, DomainModule],
+  imports: [infrastructurePersistenceModule, DomainModule, ApplicationModule],
   controllers: [LinkController],
   providers: [LinkService],
   exports: [LinkService, infrastructurePersistenceModule],

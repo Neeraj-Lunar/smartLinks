@@ -18,6 +18,7 @@ export class ApplicationMapper {
     domain.imageUrl = raw.imageUrl ?? null;
     domain.storeUrl = raw.storeUrl ?? null;
     domain.category = raw.category ?? null;
+    domain.fallbackUrl = raw.fallbackUrl ?? null;
     domain.createdAt = raw.createdAt;
     domain.updatedAt = raw.updatedAt;
     return domain;
@@ -38,6 +39,7 @@ export class ApplicationMapper {
     entity.imageUrl = domain.imageUrl;
     entity.storeUrl = domain.storeUrl;
     entity.category = domain.category;
+    entity.fallbackUrl = domain.fallbackUrl;
     entity.createdAt = domain.createdAt;
     entity.updatedAt = domain.updatedAt;
 

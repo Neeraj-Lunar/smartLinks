@@ -70,6 +70,14 @@ export class ApplicationService {
     return app;
   }
 
+  async getallAppsDataByCond(cond: any, options?: any): Promise<ApplicationModel[]> {
+    const app = await this.applicationRepo.findAll(cond, options);
+    if (!app) {
+      throw new NotFoundException(`Applications not found`);
+    }
+    return app;
+  }
+
   async update(id:string, updateApplicationDto: UpdateApplicationDto): Promise<ApplicationModel> {
     const existing = await this.applicationRepo.findById(id);
     if (!existing) {

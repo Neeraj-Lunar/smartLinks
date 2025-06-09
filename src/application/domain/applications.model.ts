@@ -32,6 +32,9 @@ export class ApplicationModel {
   storeUrl: string | null;
 
   @Expose()
+  fallbackUrl: string | null;
+
+  @Expose()
   category: string | null;
 
   @Expose()

@@ -32,7 +32,7 @@ export class PgApplicationRepository implements ApplicationRepository {
     return entity ? ApplicationMapper.toDomain(entity) : null;
   }
 
-  async findOne (filter: Partial<ApplicationModel>, options?: { withRelations?: boolean }): Promise<ApplicationModel | null> {
+  async findOne(filter: Partial<ApplicationModel>, options?: { withRelations?: boolean }): Promise<ApplicationModel | null> {
       const cleanedFilter: any = Object.fromEntries(
         Object.entries(filter).filter(([_, v]) => v !== null && v !== undefined)
       );
@@ -45,7 +45,20 @@ export class PgApplicationRepository implements ApplicationRepository {
         : await this.repo.findOneBy(cleanedFilter);
     
       return entity ? ApplicationMapper.toDomain(entity) : null;
-    }
+  }
+
+  async findAll(filter: Partial<ApplicationModel>, options?: { withRelations?: boolean }): Promise<ApplicationModel[]> {
+    const cleanedFilter: any = Object.fromEntries(
+      Object.entries(filter).filter(([_, v]) => v !== null && v !== undefined)
+    );
+  
+    const entities = await this.repo.find({
+      where: cleanedFilter,
+      relations: options?.withRelations ? ['project'] : [],
+    });
+  
+    return entities.map((entity) => ApplicationMapper.toDomain(entity));
+  }
 
   async find(): Promise<ApplicationModel[]> {
     const entities = await this.repo.find();

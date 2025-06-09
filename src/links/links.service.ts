@@ -8,54 +8,79 @@ import { LinkRepository } from './infrastructure/persistence/link.repository';
 import { LinkModel } from './domain/link.model';
 import { CreateLinkDto } from './dto/create-link-dto';
 import { UpdateLinkDto } from './dto/update-link-dto';
-import { Platform } from 'src/shared/enums/platform.enum';
 import { DomainService } from 'src/domains/domains.service';
 import { createShortCode } from 'src/utils/short-code.util';
+import { ApplicationService } from 'src/application/application.service';
+import { Platform } from 'src/shared/enums/platform.enum';
+import { ApplicationModel } from 'src/application/domain/applications.model';
 
 
 @Injectable()
 export class LinkService {
   constructor(
     private readonly linkRepo: LinkRepository,
-     private readonly domainService: DomainService,
+    private readonly domainService: DomainService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
-  async create(dto: CreateLinkDto) {
-    if (dto.domainId && dto.packageId) {
-      throw new BadRequestException(`Provide only one of domainId or packageId, not both`);
-    }
-    if (dto.domainId) {
-      return this.createLinkWithDomainId(dto);
-    }
-    if (dto.packageId) {
-      return this.createLinkWithPackageId(dto);
-    }
-    throw new BadRequestException(`Either domainId or packageId is required`);
-  }
-  
-  async createLinkWithDomainId(dto: CreateLinkDto): Promise<LinkModel> {
+  async createLink(data: any): Promise<LinkModel> {
     const shortUrl = await this.generateUniqueShortUrlWithCheck();
-    const fullUrl = this.buildFullUrl(shortUrl, dto.params);
-  
+    const fullUrl = this.buildFullUrl(shortUrl, data.params);
     return await this.linkRepo.create({
-      ...dto,
+      domainId: data.domainId,               
+      androidAppId: data.androidAppId,           
+      iosAppId: data.iosAppId,             
+      params: data.params,
       shortUrl,
       fullUrl,
     });
   }
 
-  async createLinkWithPackageId(data: CreateLinkDto) {
-    const appDomain = await this.domainService.getAppDomainByPackageId(data.packageId);  
-    const linkData = await this.createLinkWithDomainId({ ...data, domainId: appDomain.id });
+  async create(data: CreateLinkDto) {
+    const { androidApp, iosApp, domain } = await this.resolveAppsAndDomain(data);
+  
+    const linkData = await this.createLink({
+      ...data,
+      androidAppId: androidApp.id,
+      iosAppId: iosApp.id,
+      domainId: domain.id,
+    });
+  
     return {
       redirectionUrl: linkData.shortUrl,
-      metaData: {
-        name: linkData.name,
-        shortUrl: linkData.shortUrl,
-        fullUrl: linkData.fullUrl,
-        params: linkData.params
-      },
     };
+  }
+  
+  private async resolveAppsAndDomain(data: CreateLinkDto) {
+    if (data.packageId) {
+      return this.resolveUsingSinglePackageId(data.packageId);
+    }
+  
+    if (data.androidPackageId && data.iosPackageId) {
+      return this.resolveUsingBothPackageIds(data.androidPackageId, data.iosPackageId);
+    }
+  
+    throw new BadRequestException('Missing packageId');
+  }
+  
+  private async resolveUsingSinglePackageId(packageId: string) {
+    const domain = await this.domainService.getAppDomainByPackageId(packageId);
+    const apps = await this.applicationService.getallAppsDataByCond({ projectId: domain.projectId });
+  
+    const androidApp = apps.find(app => app.os === Platform.ANDROID);
+    const iosApp = apps.find(app => app.os === Platform.IOS);
+  
+    if (!androidApp) throw new NotFoundException('Android app not found');
+    if (!iosApp) throw new NotFoundException('iOS app not found');
+  
+    return { androidApp, iosApp, domain };
+  }
+  
+  private async resolveUsingBothPackageIds(androidId: string, iosId: string) {
+    const androidApp = await this.applicationService.getAppDataByCond({ id: androidId }, { withRelations: true });
+    const iosApp = await this.applicationService.getAppDataByCond({ id: iosId }, { withRelations: true });
+    const domain = await this.domainService.getAppDomainByPackageId(androidId); 
+    return { androidApp, iosApp, domain };
   }
 
   private async generateUniqueShortUrlWithCheck(): Promise<string> {
@@ -88,45 +113,38 @@ export class LinkService {
     return links;
   }
 
-  async getRedirectionInfo(short: string, deviceInfo: { platform: string }) {
+  async getRedirectionInfo(shortUrl: string, deviceInfo: { platform?: string }) {
     const link = await this.linkRepo.findOne(
-      { shortUrl: short },
+      { shortUrl },
       { withRelations: true }
     );
   
     if (!link) {
-      throw new NotFoundException(`No link found for ${short}`);
-    }
-
-    if (!link.template) {
-      throw new NotFoundException(`No Template found for ${short}`);
+      throw new NotFoundException(`Short URL not found`);
     }
   
-    const template = link.template || null;
-    const { notInstalledRdt, desktopRdt, androidApp, iosApp } = template;
+    const { androidApp, iosApp, params } = link;
+    const platform = deviceInfo.platform?.toLowerCase();
   
-    let redirectionUrl: string | null = null;
-  
-    switch (deviceInfo.platform.toLowerCase()) {
-      case Platform.ANDROID:
-          redirectionUrl = androidApp?.storeUrl || notInstalledRdt.androidUrlRdt || null;
-        break;
-      case Platform.IOS:
-          redirectionUrl = iosApp?.storeUrl || notInstalledRdt.iosUrlRdt || null;
-        break;
-      case Platform.DESKTOP:
-      default:
-        redirectionUrl = desktopRdt.urlRdt || null;
-        break;
+    const resolvePlatformUrl = (app?: ApplicationModel | null): string | null => app?.storeUrl ?? app?.fallbackUrl ?? null;
+    if (platform === Platform.ANDROID || platform === Platform.IOS) {
+      const app = platform === Platform.ANDROID ? androidApp : iosApp;
+      const storeUrl = resolvePlatformUrl(app);
+      return {
+        storeUrl,
+        meta: {
+          params,
+          platform
+        },
+      };
     }
   
     return {
-      redirectionUrl,
-      metaData: {
-        shortUrl: link.shortUrl,
-        fullUrl: link.fullUrl,
-        params: link.params,
-        platform: deviceInfo.platform
+      androidstoreUrl: resolvePlatformUrl(androidApp),
+      iosStoreUrl: resolvePlatformUrl(iosApp),
+      fallbackUrl: androidApp?.fallbackUrl || iosApp?.fallbackUrl || '',
+      meta: {
+        params,
       },
     };
   }

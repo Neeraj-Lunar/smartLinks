@@ -54,6 +54,11 @@ export class CreateApplicationsTable1748542678274 implements MigrationInterface 
           isNullable: true,
         },
         {
+          name: 'fallback_url',
+          type: 'varchar',
+          isNullable: false,
+        },
+        {
           name: 'created_at',
           type: 'timestamp',
           default: 'now()',

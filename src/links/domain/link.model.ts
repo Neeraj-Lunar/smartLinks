@@ -1,13 +1,13 @@
 import { Expose } from 'class-transformer';
+import { ApplicationModel } from 'src/application/domain/applications.model';
 import { DomainModel } from 'src/domains/domain/domain.model';
-import { TemplateModel } from 'src/templates/domain/template.model';
 
 export class LinkModel {
   @Expose()
   id: number;
 
   @Expose()
-  name: string;
+  name?: string | null;
 
   @Expose()
   domainId: number;
@@ -22,10 +22,16 @@ export class LinkModel {
   fullUrl: string | null;
 
   @Expose()
-  templateId: number;
+  androidAppId: number;
 
   @Expose()
-  template?: TemplateModel | null;
+  iosAppId: number;
+
+  @Expose()
+  androidApp?: ApplicationModel | null;
+
+  @Expose()
+  iosApp?: ApplicationModel | null;
 
   @Expose()
   params?: Record<string, any> | null;

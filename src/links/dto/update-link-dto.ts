@@ -10,10 +10,25 @@ import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateLinkDto {
-  @ApiPropertyOptional({ example: 'Updated Promo Link' })
+  @ApiPropertyOptional({ example: 'Updated Link Name' })
   @IsOptional()
   @IsString()
   name?: string;
+  
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ description: 'Updated Package ID', example: 'com.example.app' })
+  packageId: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ description: 'Updated Android Package ID', example: 'com.example.app' })
+  iosPackageId: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ description: 'Updated Ios Package ID', example: 'id123456789' })
+  androidPackageId: string;
 
   @ApiPropertyOptional({ example: 1, description: 'Updated domain ID if needed' })
   @IsOptional()
@@ -32,11 +47,6 @@ export class UpdateLinkDto {
   @IsOptional()
   @IsUrl()
   fullUrl?: string;
-
-  @ApiPropertyOptional({ example: 2, description: 'New template ID if changing the redirect rules' })
-  @IsOptional()
-  @IsNumber()
-  templateId?: number;
 
   @ApiPropertyOptional({
     example: { utm_medium: 'cpc', ref: 'partner1' },

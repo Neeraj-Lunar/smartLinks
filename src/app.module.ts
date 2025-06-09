@@ -10,7 +10,6 @@ import { HomeModule } from './home/home.module';
 import { DatabaseConfig } from './database/config/database-config.type';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MongooseConfigService } from './database/mongoose-config.service';
-import { TemplateModule } from './templates/templates.module';
 import { ApplicationModule } from './application/application.module';
 import { LinkModule } from './links/links.module';
 import { ProjectModule } from './projects/projects.module';
@@ -45,7 +44,6 @@ const infrastructureDatabaseModule = (databaseConfig() as DatabaseConfig).isDocu
     ProjectModule,
     DomainModule,
     ApplicationModule,
-    TemplateModule,
     LinkModule
   ],
 })
