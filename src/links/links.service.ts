@@ -125,7 +125,8 @@ export class LinkService {
       linkMeta: {
         shortUrl: link.shortUrl,
         fullUrl: link.fullUrl,
-        Platform: deviceInfo.platform
+        params: link.params,
+        platform: deviceInfo.platform
       },
     };
   }
