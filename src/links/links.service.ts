@@ -122,7 +122,7 @@ export class LinkService {
   
     return {
       redirectionUrl,
-      linkMeta: {
+      metaData: {
         shortUrl: link.shortUrl,
         fullUrl: link.fullUrl,
         params: link.params,
