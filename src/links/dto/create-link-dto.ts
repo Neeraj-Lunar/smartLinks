@@ -28,6 +28,7 @@ export class CreateLinkDto {
   name: string;
 
   @IsObject()
+  @IsOptional()
   @ApiPropertyOptional({ example: { ref: '123', tag: 'abc' } })
   params: object;
 }
