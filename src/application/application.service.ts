@@ -3,7 +3,6 @@ import { ApplicationRepository } from './infrastructure/persistence/application.
 import { CreateApplicationDto } from './dto/create-application-dto';
 import { ApplicationModel } from './domain/applications.model';
 import { UpdateApplicationDto } from './dto/update-application-dto';
-import * as appStore from 'app-store-scraper';
 import gplay from 'google-play-scraper';
 import { Platform } from '../shared/enums/platform.enum';
 import { AppData } from './interface/app-data.interface';
@@ -15,35 +14,7 @@ export class ApplicationService {
   ) {}
 
   async create(createApplicationDto: CreateApplicationDto): Promise<ApplicationModel> {
-    const existing = await this.applicationRepo.findOne({packageId: createApplicationDto.packageId});
-    if (existing) {
-      throw new BadRequestException(`Application already exists`);
-    }
     return this.applicationRepo.create(createApplicationDto);
-  }
-
-  async getAppData(storeUrl: string): Promise<any> {
-    const decodedUrl = decodeURIComponent(storeUrl);
-
-    let appleAppId: string | null = null;
-    let androidPackageId: string | null = null;
-
-    if (decodedUrl.includes('apps.apple.com')) {
-      const match = decodedUrl.match(/id(\d+)/);
-      appleAppId = match ? match[1] : null;
-    }
-
-    if (decodedUrl.includes('play.google.com')) {
-      const match = decodedUrl.match(/id=([a-zA-Z0-9_.]+)/);
-      androidPackageId = match ? match[1] : null;
-    }
-
-    return {
-      originalUrl: storeUrl,
-      decodedUrl,
-      appleAppId,
-      androidPackageId,
-    };
   }
 
   async find(): Promise<ApplicationModel[]> {
@@ -100,17 +71,27 @@ export class ApplicationService {
 
   async extractIosMetadata(storeUrl: string): Promise<AppData> {
     const match = storeUrl.match(/id(\d+)/);
-    if (!match) throw new Error('Invalid iOS App Store URL');
+    if (!match) {
+      throw new Error('Invalid iOS App Store URL');
+    }
+  
     const appId = match[1];
-
-    const app = await appStore.app({ id: appId });
+    const res = await fetch(`https://itunes.apple.com/lookup?id=${appId}`);
+    const json = await res.json();
+  
+    if (!json.results || json.results.length === 0) {
+      throw new Error('App not found in iTunes Lookup API');
+    }
+  
+    const app = json.results[0];
   
     return {
-      name: app.title,
-      icon: app.icon,
-      genre: app.primaryGenre,
+      name: app.trackName,
+      icon: app.artworkUrl100,
+      genre: app.primaryGenreName,
       os: Platform.IOS,
-      packageId: match[0],
+      packageId: app.bundleId,
+      bundleId: app.trackId.toString(),
       storeUrl,
     };
   }

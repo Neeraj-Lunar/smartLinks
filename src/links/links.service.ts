@@ -126,12 +126,18 @@ export class LinkService {
     const { androidApp, iosApp, params } = link;
     const platform = deviceInfo.platform?.toLowerCase();
   
-    const resolvePlatformUrl = (app?: ApplicationModel | null): string | null => app?.storeUrl ?? app?.fallbackUrl ?? null;
+    const resolvePlatformUrl = (app?: ApplicationModel | null): string | null => app?.storeUrl ?? null;
+    const resolveFallBackUrl = (app?: ApplicationModel | null): string | null => app?.fallbackUrl ?? null;
+    const resolvePlatformPackageId = (app?: ApplicationModel | null): string | null => app?.packageId ?? null;
     if (platform === Platform.ANDROID || platform === Platform.IOS) {
       const app = platform === Platform.ANDROID ? androidApp : iosApp;
       const storeUrl = resolvePlatformUrl(app);
+      const packageId = resolvePlatformPackageId(app)
+      const fallbackUrl = resolveFallBackUrl(app)
       return {
         storeUrl,
+        fallbackUrl,
+        packageId,
         meta: {
           params,
           platform
@@ -143,6 +149,8 @@ export class LinkService {
       androidstoreUrl: resolvePlatformUrl(androidApp),
       iosStoreUrl: resolvePlatformUrl(iosApp),
       fallbackUrl: androidApp?.fallbackUrl || iosApp?.fallbackUrl || '',
+      androidPackageId: androidApp?.packageId || '',
+      iosPackageId: iosApp?.packageId || '',
       meta: {
         params,
       },

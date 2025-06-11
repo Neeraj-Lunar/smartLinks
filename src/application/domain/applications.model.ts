@@ -20,6 +20,9 @@ export class ApplicationModel {
   packageId: string;
 
   @Expose()
+  bundleId?: string;
+
+  @Expose()
   projectId: number;
 
   @Expose()

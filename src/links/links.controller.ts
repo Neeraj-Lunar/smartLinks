@@ -45,7 +45,7 @@ export class LinkController {
   @Post('resolve/:shortUrl')
   async resolveLink(
     @Param('shortUrl') shortUrl: string,
-    @Body() deviceInfo: ResolveUrlDto,
+    @Body() deviceInfo: ResolveUrlDto = {},
   ) {
     const links = await this.linkService.getRedirectionInfo(shortUrl, deviceInfo);
     return {

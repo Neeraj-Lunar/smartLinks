@@ -44,6 +44,14 @@ export class CreateApplicationDto {
   packageId: string;
 
   @ApiProperty({
+    example: 'id123456789',
+    description: 'bundle ID IOS',
+  })
+  @IsString()
+  @IsOptional()
+  bundleId?: string;
+
+  @ApiProperty({
     example: 1,
     description: 'Associated project ID',
   })

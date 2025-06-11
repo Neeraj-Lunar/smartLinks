@@ -39,6 +39,11 @@ export class CreateApplicationsTable1748542678274 implements MigrationInterface 
           isNullable: false,
         },
         {
+          name: 'bundle_id',
+          type: 'varchar',
+          isNullable: true,
+        },
+        {
           name: 'image_url',
           type: 'varchar',
           isNullable: true,

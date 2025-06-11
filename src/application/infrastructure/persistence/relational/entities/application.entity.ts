@@ -30,6 +30,9 @@ export class ApplicationEntity {
   @Column({ name: 'package_id', type: 'varchar', nullable: false })
   packageId: string;
 
+  @Column({ name: 'bundle_id', type: 'varchar', nullable: true })
+  bundleId: string;
+
   @Column({ name: 'project_id', type: 'int', nullable: false })
   projectId: number;
 

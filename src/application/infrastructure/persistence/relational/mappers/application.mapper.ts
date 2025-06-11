@@ -11,6 +11,7 @@ export class ApplicationMapper {
     domain.os = raw.os as Platform;
     domain.status = raw.status as StatusEnums;
     domain.packageId = raw.packageId;
+    domain.bundleId = raw.bundleId;
     domain.projectId = raw.projectId;
     if(raw.project) {
       domain.project = raw.project;
@@ -35,6 +36,9 @@ export class ApplicationMapper {
     entity.os = domain.os;
     entity.status = domain.status;
     entity.packageId = domain.packageId;
+    if(domain.bundleId) {
+      entity.bundleId = domain.bundleId;
+    }
     entity.projectId = domain.projectId;
     entity.imageUrl = domain.imageUrl;
     entity.storeUrl = domain.storeUrl;

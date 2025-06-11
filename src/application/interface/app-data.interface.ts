@@ -6,5 +6,6 @@ export interface AppData {
   genre: string;
   os: Platform;
   packageId: string;
+  bundleId?: string;
   storeUrl: string;
 }
