@@ -102,7 +102,7 @@ export class LinkService {
 
   async extractParameters(shortUrl: string) {
     const linkDetails = await this.linkRepo.findOne({shortUrl: shortUrl});
-    return linkDetails?.params;
+    return linkDetails?.params || null;
   }
 
   async find(): Promise<LinkModel[]> {

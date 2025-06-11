@@ -43,7 +43,7 @@ export class ResponseInterceptor implements NestInterceptor {
       status: true,
       statusCode,
       message: res?.message || 'Success',
-      result: res?.result ?? res,
+      result: res.result,
       ...(res?.totalPages !== undefined && { totalPages: res.totalPages }),
       timestamp: new Date().toISOString(),
     };
