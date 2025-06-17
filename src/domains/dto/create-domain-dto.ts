@@ -31,5 +31,5 @@ export class CreateDomainDto {
   })
   @IsInt()
   @Min(1, { message: 'ProjectId must be a positive integer' })
-  projectId: number;
+  projectId: string;
 }

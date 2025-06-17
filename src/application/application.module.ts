@@ -1,23 +1,16 @@
 import {
-  forwardRef,
   Module
 } from '@nestjs/common';
-import { DatabaseConfig } from '../database/config/database-config.type';
-import databaseConfig from '../database/config/database.config';
-import { RelationalApplicationPersistenceModule } from './infrastructure/persistence/relational/relational-persistence.module';
-
 import { ApplicationController } from './application.controller';
 import { ApplicationService } from './application.service';
+import { documentApplicationPersistenceModule } from './infrastructure/persistence/document/relational-persistence.module';
 import { DomainModule } from 'src/domains/domains.module';
 
-// const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig).isDocumentDatabase
-//   ? DocumentApplicationPersistenceModule
-//   : RelationalApplicationPersistenceModule;
-const infrastructurePersistenceModule = RelationalApplicationPersistenceModule
+
+const infrastructurePersistenceModule = documentApplicationPersistenceModule
 
 @Module({
-  imports: [infrastructurePersistenceModule
-  ],
+  imports: [infrastructurePersistenceModule, DomainModule],
   controllers: [ApplicationController],
   providers: [ApplicationService],
   exports: [ApplicationService, infrastructurePersistenceModule],

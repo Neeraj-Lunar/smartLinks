@@ -19,7 +19,6 @@ import { DomainModule } from './domains/domains.module';
 const infrastructureDatabaseModule = (databaseConfig() as DatabaseConfig).isDocumentDatabase
 ? MongooseModule.forRootAsync({
     useClass: MongooseConfigService,
-    connectionName: CONNECTION_NAME,
   })
 : TypeOrmModule.forRootAsync({
     name: CONNECTION_NAME,

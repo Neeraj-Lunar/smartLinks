@@ -28,7 +28,7 @@ export class ProjectService {
       status: StatusEnums.ACTIVE,
       projectId: project.id
     }
-    this.domainService.create(domainData)
+    await this.domainService.create(domainData)
     return project;
   }
 
@@ -40,7 +40,7 @@ export class ProjectService {
     return org;
   }
 
-  async findById(id: number): Promise<ProjectModel> {
+  async findById(id: string): Promise<ProjectModel> {
     const org = await this.ProjectRepo.findById(id);
     if (!org) {
       throw new NotFoundException(`Project not found`);
@@ -48,7 +48,7 @@ export class ProjectService {
     return org;
   }
 
-  async update(id:number, updateProjectDto: UpdateProjectDto): Promise<ProjectModel> {
+  async update(id: string, updateProjectDto: UpdateProjectDto): Promise<ProjectModel> {
     const existing = await this.ProjectRepo.findById(id);
     if (!existing) {
       throw new NotFoundException(`Project not found`);
@@ -60,7 +60,7 @@ export class ProjectService {
     return updated
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     const org = await this.ProjectRepo.findById(id);
     if (!org) {
       throw new NotFoundException(`Project not found`);

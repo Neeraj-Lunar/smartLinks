@@ -54,7 +54,7 @@ export class LinkController {
   }
 
   @Get(':id')
-  async findById(@Param('id') id: number) {
+  async findById(@Param('id') id: string) {
     const link = await this.linkService.findById(id);
     return {
       result: link,
@@ -63,7 +63,7 @@ export class LinkController {
 
   @Post(':id')
   async update(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() updateLinkDto: UpdateLinkDto,
   ) {
     const link = await this.linkService.update(id, updateLinkDto);
@@ -73,7 +73,7 @@ export class LinkController {
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: number) {
+  async delete(@Param('id') id: string) {
     await this.linkService.delete(id);
     return {
       message: 'Link deleted successfully',

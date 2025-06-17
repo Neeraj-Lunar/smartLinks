@@ -2,8 +2,7 @@ import {
   IsString,
   IsOptional,
   IsEnum,
-  IsUrl,
-  IsNumber,
+  IsUrl
 } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Platform } from 'src/shared/enums/platform.enum';
@@ -43,14 +42,6 @@ export class UpdateApplicationDto {
   @IsOptional()
   @IsString()
   packageId?: string;
-
-  @ApiPropertyOptional({
-    example: 2,
-    description: 'Updated associated project ID',
-  })
-  @IsOptional()
-  @IsNumber()
-  projectId?: number;
 
   @ApiPropertyOptional({
     example: 'https://example.com/new-icon.png',

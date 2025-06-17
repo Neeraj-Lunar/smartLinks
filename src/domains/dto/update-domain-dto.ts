@@ -33,5 +33,5 @@ export class UpdateDomainDto {
   @IsOptional()
   @IsInt()
   @Min(1, { message: 'ProjectId must be a positive integer' })
-  ProjectId?: number;
+  ProjectId?: string;
 }

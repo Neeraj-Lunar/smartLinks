@@ -1,60 +1,53 @@
-import { ApplicationEntity } from 'src/application/infrastructure/persistence/relational/entities/application.entity';
-import { DomainEntity } from 'src/domains/infrastructure/persistence/relational/entities/domain.entity';
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  JoinColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
+import { ApplicationSchemaClass } from 'src/application/infrastructure/persistence/document/entities/application.entity';
+import { DomainSchemaClass } from 'src/domains/infrastructure/persistence/document/entities/domain.entity';
+import { EntityDocumentHelper } from 'src/utils/document-entity-helper';
 
+export type LinkDocument = HydratedDocument<LinkSchemaClass>;
 
-@Entity('links')
-export class LinkEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column({ type: 'varchar', nullable: true })
+@Schema({
+  collection: 'links',
+  timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' },
+  toJSON: { virtuals: true, getters: true },
+  toObject: { virtuals: true, getters: true },
+})
+export class LinkSchemaClass extends EntityDocumentHelper {
+  @Prop({ type: String, default: null })
   name: string | null;
 
-  @Column({ name: 'domain_id', type: 'varchar', nullable: false })
-  domainId: number;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: DomainSchemaClass.name, required: true })
+  domain: Types.ObjectId | DomainSchemaClass;
 
-  @ManyToOne(() => DomainEntity)
-  @JoinColumn({ name: 'domain_id' })
-  domainDetails: DomainEntity;
-
-  @Column({ name: 'short_url', type: 'varchar', nullable: true, unique: true })
+  @Prop({ type: String, unique: true, default: null })
   shortUrl: string | null;
 
-  @Column({ name: 'full_url', type: 'varchar', nullable: true, unique: true })
+  @Prop({ type: String, unique: true, default: null })
   fullUrl: string | null;
 
-  @Column({ name: 'android_app_id', type: 'int', nullable: false })
-  androidAppId: number;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: ApplicationSchemaClass.name, required: true })
+  androidApp: Types.ObjectId | ApplicationSchemaClass;
 
-  @ManyToOne(() => ApplicationEntity)
-  @JoinColumn({ name: 'android_app_id' })
-  androidApp: ApplicationEntity;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: ApplicationSchemaClass.name, required: true })
+  iosApp: Types.ObjectId | ApplicationSchemaClass;
 
-  @Column({ name: 'ios_app_id', type: 'int', nullable: false })
-  iosAppId: number;
-
-  @ManyToOne(() => ApplicationEntity)
-  @JoinColumn({ name: 'ios_app_id' })
-  iosApp: ApplicationEntity;
-
-  @Column({ type: 'jsonb', nullable: true })
+  @Prop({ type: mongoose.Schema.Types.Mixed, default: null })
   params: Record<string, any> | null;
 
-  @Column({ name: 'expired_at', type: 'timestamp', nullable: true })
+  @Prop({ type: Date, default: null })
   expiredAt: Date | null;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @Prop({ type: Date, default: Date.now })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @Prop({ type: Date, default: Date.now })
   updatedAt: Date;
 }
+
+export const LinkSchema = SchemaFactory.createForClass(LinkSchemaClass);
+
+LinkSchema.index({ shortUrl: 1 }, { unique: true });
+LinkSchema.index({ fullUrl: 1 }, { unique: true });
+LinkSchema.index({ domain: 1 });
+LinkSchema.index({ androidApp: 1 });
+LinkSchema.index({ iosApp: 1 });

@@ -3,7 +3,7 @@ import { StatusEnums } from 'src/shared/enums/status.enum';
 
 export class ProjectModel {
   @Expose()
-  id: number;
+  id: string;
 
   @Expose()
   name: string;

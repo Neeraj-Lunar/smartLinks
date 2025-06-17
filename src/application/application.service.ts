@@ -6,15 +6,24 @@ import { UpdateApplicationDto } from './dto/update-application-dto';
 import gplay from 'google-play-scraper';
 import { Platform } from '../shared/enums/platform.enum';
 import { AppData } from './interface/app-data.interface';
+import { DomainService } from 'src/domains/domains.service';
+import { DomainModel } from 'src/domains/domain/domain.model';
 
 @Injectable()
 export class ApplicationService {
   constructor(
     private readonly applicationRepo: ApplicationRepository,
+    private readonly domainService: DomainService,
   ) {}
 
   async create(createApplicationDto: CreateApplicationDto): Promise<ApplicationModel> {
-    return this.applicationRepo.create(createApplicationDto);
+    const domainDetails = await this.domainService.findByCond({project: createApplicationDto.projectId})
+    const data = {
+      ...createApplicationDto,
+      project: { id: createApplicationDto.projectId},
+      domain: {id: domainDetails.id}
+    }
+    return this.applicationRepo.create(data);
   }
 
   async find(): Promise<ApplicationModel[]> {
@@ -25,7 +34,7 @@ export class ApplicationService {
     return app;
   }
 
-  async findById(id: number): Promise<ApplicationModel> {
+  async findById(id: string): Promise<ApplicationModel> {
     const app = await this.applicationRepo.findById(id);
     if (!app) {
       throw new NotFoundException(`Application not found`);
@@ -33,16 +42,44 @@ export class ApplicationService {
     return app;
   }
 
-  async getAppDataByCond(cond: any, options: any): Promise<ApplicationModel> {
-    const app = await this.applicationRepo.findOne(cond, options);
+  async appWellKnownInfo(subDomain: string): Promise<ApplicationModel[]> {
+    const domain = await this.domainService.findByCond({domainName: subDomain})
+    const app = await this.applicationRepo.findAll({domain: { id :domain.id}});
     if (!app) {
       throw new NotFoundException(`Application not found`);
     }
     return app;
   }
 
-  async getallAppsDataByCond(cond: any, options?: any): Promise<ApplicationModel[]> {
-    const app = await this.applicationRepo.findAll(cond, options);
+  async getAppDomainByPackageId(packageId: string): Promise<DomainModel> {
+    if (!packageId) {
+      throw new NotFoundException(`packageId is required`);
+    }
+    const app = await this.applicationRepo.findOne({packageId}, { withRelations: true });
+    if (!app) {
+      throw new NotFoundException(`Application not found`);
+    }
+
+    if (!app.project.id) {
+      throw new NotFoundException(`Application not found`);
+    }
+    const domain = await this.domainService.findByProjectId(app.project.id)
+    if (!domain) {
+      throw new NotFoundException(`Domains not found`);
+    }
+    return domain;
+  }
+
+  async getAppDataByCond(condition: Partial<ApplicationModel>, options: { withRelations?: boolean }): Promise<ApplicationModel> {
+    const app = await this.applicationRepo.findOne(condition, options);
+    if (!app) {
+      throw new NotFoundException(`Application not found`);
+    }
+    return app;
+  }
+
+  async getallAppsDataByCond(condition: Partial<ApplicationModel>, options?: { withRelations?: boolean }): Promise<ApplicationModel[]> {
+    const app = await this.applicationRepo.findAll(condition, options);
     if (!app) {
       throw new NotFoundException(`Applications not found`);
     }
@@ -61,7 +98,7 @@ export class ApplicationService {
     return updated
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     const app = await this.applicationRepo.findById(id);
     if (!app) {
       throw new NotFoundException(`Application not found`);

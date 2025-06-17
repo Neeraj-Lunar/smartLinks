@@ -5,10 +5,9 @@ import { ConfigService } from '@nestjs/config';
 import { AllConfigType } from './config/config.type';
 import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
-import { ResponseInterceptor } from './utils/response.interceptor';
-import { AllExceptionsFilter } from './utils/exception.filter';
 import * as morgan from 'morgan';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ResponseInterceptor } from './utils/response-interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
@@ -36,7 +35,6 @@ async function bootstrap() {
     }),
   );
   app.useGlobalInterceptors(new ResponseInterceptor());
-  app.useGlobalFilters(new AllExceptionsFilter());
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Smart Link API')

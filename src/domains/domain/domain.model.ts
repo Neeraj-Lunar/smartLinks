@@ -4,7 +4,7 @@ import { StatusEnums } from 'src/shared/enums/status.enum';
 
 export class DomainModel {
   @Expose()
-  id: number;
+  id: string;
 
   @Expose()
   domainName: string;
@@ -13,11 +13,11 @@ export class DomainModel {
   status: StatusEnums;
 
   @Expose()
-  projectId: number;
+  projectId: string;
 
   @Expose()
   @Type(() => ProjectModel)
-  project?: ProjectModel;
+  project?: string | ProjectModel;
 
   @Expose()
   createdAt: Date;

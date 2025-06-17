@@ -3,8 +3,7 @@ import {
   IsNotEmpty,
   IsEnum,
   IsOptional,
-  IsUrl,
-  IsNumber,
+  IsUrl
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Platform } from 'src/shared/enums/platform.enum';
@@ -55,9 +54,9 @@ export class CreateApplicationDto {
     example: 1,
     description: 'Associated project ID',
   })
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  projectId: number;
+  projectId: string;
 
   @ApiPropertyOptional({
     example: 'https://example.com/icon.png',
@@ -71,8 +70,9 @@ export class CreateApplicationDto {
     example: 'https://play.google.com/store/apps/details?id=com.example.myapp',
     description: 'URL to the app store',
   })
+  @IsOptional()
   @IsUrl()
-  storeUrl: string;
+  storeUrl?: string;
 
   @ApiProperty({
     example: 'https://example.com/fallback',

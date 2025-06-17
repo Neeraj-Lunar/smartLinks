@@ -12,7 +12,7 @@ import { CreateApplicationDto } from './dto/create-application-dto';
 import { UpdateApplicationDto } from './dto/update-application-dto';
 import { ApplicationService } from './application.service';
 
-@Controller('applications')
+@Controller('apps')
 export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
 
@@ -45,8 +45,24 @@ export class ApplicationController {
   }
 
   @Get(':id')
-  async findById(@Param('id') id: number) {
+  async findById(@Param('id') id: string) {
     const application = await this.applicationService.findById(id);
+    return {
+      result: application
+    }
+  }
+
+  @Get('byPackageId/:packageId')
+  async findByPacakageId(@Param('packageId') id: string) {
+    const application = await this.applicationService.getAppDomainByPackageId(id);
+    return {
+      result : application
+    }
+  }
+
+  @Get('/info/:subDomain')
+  async infoBySubdomain(@Param('subDomain') subDomain: string) {
+    const application = await this.applicationService.appWellKnownInfo(subDomain);
     return {
       result: application
     }
@@ -64,7 +80,7 @@ export class ApplicationController {
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: number) {
+  async delete(@Param('id') id: string) {
     await this.applicationService.delete(id);
     return {
       message : "application deleted successfully"

@@ -1,21 +1,22 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { CONNECTION_NAME } from '../../../../config/constants';
-import { LinkEntity } from './entities/link.entity';
-import { PgLinkRepository } from './repositories/link.repository';
 import { LinkRepository } from '../link.repository';
+import { LinkDocumentRepository } from './repositories/link.repository';
+import { MongooseModule } from '@nestjs/mongoose';
+import { LinkSchema, LinkSchemaClass } from './entities/link.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([LinkEntity], CONNECTION_NAME),
+    MongooseModule.forFeature([
+      { name: LinkSchemaClass.name, schema: LinkSchema },
+    ]),
   ],
   providers: [
-    PgLinkRepository,
+    LinkDocumentRepository,
     {
       provide: LinkRepository,
-      useExisting: PgLinkRepository,
+      useExisting: LinkDocumentRepository,
     },
   ],
-  exports: [LinkRepository, PgLinkRepository],
+  exports: [LinkRepository, LinkDocumentRepository],
 })
-export class RelationalLinkPersistenceModule {}
+export class documentLinkPersistenceModule {}

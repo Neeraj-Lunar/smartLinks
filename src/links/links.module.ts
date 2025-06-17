@@ -1,15 +1,14 @@
 import {
   Module,
 } from '@nestjs/common';
-import { RelationalLinkPersistenceModule } from './infrastructure/persistence/relational/relational-persistence.module';
 import { LinkService } from './links.service';
 import { LinkController } from './links.controller';
-import { DomainModule } from 'src/domains/domains.module';
 import { ApplicationModule } from 'src/application/application.module';
+import { documentLinkPersistenceModule } from './infrastructure/persistence/relational/relational-persistence.module';
 
-const infrastructurePersistenceModule = RelationalLinkPersistenceModule
+const infrastructurePersistenceModule = documentLinkPersistenceModule
 @Module({
-  imports: [infrastructurePersistenceModule, DomainModule, ApplicationModule],
+  imports: [infrastructurePersistenceModule, ApplicationModule],
   controllers: [LinkController],
   providers: [LinkService],
   exports: [LinkService, infrastructurePersistenceModule],

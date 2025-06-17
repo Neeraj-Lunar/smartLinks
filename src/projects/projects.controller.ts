@@ -29,7 +29,7 @@ export class ProjectController {
   }
 
   @Get(':id')
-  async findById(@Param('id') id: number) {
+  async findById(@Param('id') id: string) {
     const application = await this.projectService.findById(id);
     return {
       result : application
@@ -46,7 +46,7 @@ export class ProjectController {
 
   @Post(':id')
   async update(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() updateProjectDto: UpdateProjectDto,
   ){
     const data = await this.projectService.update(id, updateProjectDto);
@@ -56,7 +56,7 @@ export class ProjectController {
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: number) {
+  async delete(@Param('id') id: string) {
     await this.projectService.delete(id);
     return {
       message : "Project deleted successfully"

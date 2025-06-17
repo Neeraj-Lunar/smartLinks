@@ -4,16 +4,16 @@ import { DomainModel } from 'src/domains/domain/domain.model';
 
 export class LinkModel {
   @Expose()
-  id: number;
+  id: string; // Mongo ObjectId as string
 
   @Expose()
   name?: string | null;
 
   @Expose()
-  domainId: number;
+  domainId: string; // changed from number → string
 
   @Expose()
-  domainDetails?: DomainModel | null;
+  domain?: DomainModel | null; // changed from domainDetails for consistency
 
   @Expose()
   shortUrl: string | null;
@@ -22,10 +22,10 @@ export class LinkModel {
   fullUrl: string | null;
 
   @Expose()
-  androidAppId: number;
+  androidAppId: string;
 
   @Expose()
-  iosAppId: number;
+  iosAppId: string;
 
   @Expose()
   androidApp?: ApplicationModel | null;
@@ -37,7 +37,7 @@ export class LinkModel {
   params?: Record<string, any> | null;
 
   @Expose()
-  expiredAt?: Date;
+  expiredAt?: Date | null;
 
   @Expose()
   createdAt: Date;

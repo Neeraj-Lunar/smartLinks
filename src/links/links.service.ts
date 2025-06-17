@@ -19,7 +19,6 @@ import { ApplicationModel } from 'src/application/domain/applications.model';
 export class LinkService {
   constructor(
     private readonly linkRepo: LinkRepository,
-    private readonly domainService: DomainService,
     private readonly applicationService: ApplicationService,
   ) {}
 
@@ -64,8 +63,8 @@ export class LinkService {
   }
   
   private async resolveUsingSinglePackageId(packageId: string) {
-    const domain = await this.domainService.getAppDomainByPackageId(packageId);
-    const apps = await this.applicationService.getallAppsDataByCond({ projectId: domain.projectId });
+    const domain = await this.applicationService.getAppDomainByPackageId(packageId);
+    const apps = await this.applicationService.getallAppsDataByCond({ project:{ id: domain.projectId} });
   
     const androidApp = apps.find(app => app.os === Platform.ANDROID);
     const iosApp = apps.find(app => app.os === Platform.IOS);
@@ -79,7 +78,7 @@ export class LinkService {
   private async resolveUsingBothPackageIds(androidId: string, iosId: string) {
     const androidApp = await this.applicationService.getAppDataByCond({ id: androidId }, { withRelations: true });
     const iosApp = await this.applicationService.getAppDataByCond({ id: iosId }, { withRelations: true });
-    const domain = await this.domainService.getAppDomainByPackageId(androidId); 
+    const domain = await this.applicationService.getAppDomainByPackageId(androidId); 
     return { androidApp, iosApp, domain };
   }
 
@@ -157,7 +156,7 @@ export class LinkService {
     };
   }
 
-  async findById(id: number): Promise<LinkModel> {
+  async findById(id: string): Promise<LinkModel> {
     const link = await this.linkRepo.findById(id);
     if (!link) {
       throw new NotFoundException(`Link with ID ${id} not found`);
@@ -165,7 +164,7 @@ export class LinkService {
     return link;
   }
 
-  async update(id: number, updateLinkDto: UpdateLinkDto): Promise<LinkModel> {
+  async update(id: string, updateLinkDto: UpdateLinkDto): Promise<LinkModel> {
     const existing = await this.linkRepo.findById(id);
     if (!existing) {
       throw new NotFoundException(`Link with ID ${id} not found`);
@@ -180,7 +179,7 @@ export class LinkService {
     return updated;
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     const link = await this.linkRepo.findById(id);
     if (!link) {
       throw new NotFoundException(`Link with ID ${id} not found`);

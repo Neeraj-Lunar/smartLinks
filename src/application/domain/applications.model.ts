@@ -5,7 +5,7 @@ import { ProjectModel } from 'src/projects/domain/project.model';
 
 export class ApplicationModel {
   @Expose()
-  id: string | number;
+  id: string;
 
   @Expose()
   name: string;
@@ -23,22 +23,22 @@ export class ApplicationModel {
   bundleId?: string;
 
   @Expose()
-  projectId: number;
+  project: Partial<ProjectModel>;
 
   @Expose()
-  project?: ProjectModel | null;
+  domain: Partial<ProjectModel>;
 
   @Expose()
-  imageUrl: string | null;
+  imageUrl?: string;
 
   @Expose()
-  storeUrl: string | null;
+  storeUrl?: string;
 
   @Expose()
-  fallbackUrl: string | null;
+  fallbackUrl: string;
 
   @Expose()
-  category: string | null;
+  category?: string;
 
   @Expose()
   createdAt: Date;

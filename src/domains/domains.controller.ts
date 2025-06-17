@@ -28,16 +28,8 @@ export class DomainController {
   }
 
   @Get(':id')
-  async findById(@Param('id') id: number) {
+  async findById(@Param('id') id: string) {
     const application = await this.domainService.findById(id);
-    return {
-      result : application
-    }
-  }
-
-  @Get('byPackageId/:packageId')
-  async findByPacakageId(@Param('packageId') id: string) {
-    const application = await this.domainService.getAppDomainByPackageId(id);
     return {
       result : application
     }
@@ -53,7 +45,7 @@ export class DomainController {
 
   @Post(':id')
   async update(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() updateDomainDto: UpdateDomainDto,
   ){
     const data = await this.domainService.update(id, updateDomainDto);
@@ -63,7 +55,7 @@ export class DomainController {
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: number) {
+  async delete(@Param('id') id: string) {
     await this.domainService.delete(id);
     return {
       message : "Domain deleted successfully"

@@ -2,7 +2,6 @@ import {
   IsString,
   IsOptional,
   IsUrl,
-  IsNumber,
   IsDate,
   IsObject,
 } from 'class-validator';
@@ -32,8 +31,8 @@ export class UpdateLinkDto {
 
   @ApiPropertyOptional({ example: 1, description: 'Updated domain ID if needed' })
   @IsOptional()
-  @IsNumber()
-  domainId: number;
+  @IsString()
+  domainId: string;
 
   @ApiPropertyOptional({ example: 'xyz123', description: 'Short code to update' })
   @IsOptional()
