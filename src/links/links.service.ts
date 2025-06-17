@@ -147,7 +147,8 @@ export class LinkService {
     return {
       androidstoreUrl: resolvePlatformUrl(androidApp),
       iosStoreUrl: resolvePlatformUrl(iosApp),
-      fallbackUrl: androidApp?.fallbackUrl || iosApp?.fallbackUrl || '',
+      androidFallbackUrl: androidApp?.fallbackUrl || '',
+      iosFallbackUrl: iosApp?.fallbackUrl || '',
       androidPackageId: androidApp?.packageId || '',
       iosPackageId: iosApp?.packageId || '',
       meta: {
