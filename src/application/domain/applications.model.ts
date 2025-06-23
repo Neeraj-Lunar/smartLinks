@@ -23,6 +23,9 @@ export class ApplicationModel {
   bundleId?: string;
 
   @Expose()
+  iosTeamId?:string;
+
+  @Expose()
   project: Partial<ProjectModel>;
 
   @Expose()

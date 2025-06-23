@@ -43,6 +43,14 @@ export class CreateApplicationDto {
   packageId: string;
 
   @ApiProperty({
+    example: 'YOUR_TEAM_ID',
+    description: 'Ios Team ID of the application',
+  })
+  @IsString()
+  @IsOptional()
+  iosTeamId?: string;
+
+  @ApiProperty({
     example: 'id123456789',
     description: 'bundle ID IOS',
   })

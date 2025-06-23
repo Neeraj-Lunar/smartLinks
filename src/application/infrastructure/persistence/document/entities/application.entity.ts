@@ -30,6 +30,9 @@ export class ApplicationSchemaClass extends EntityDocumentHelper {
   @Prop({ type: String })
   bundleId?: string;
 
+  @Prop({ type: String })
+  iosTeamId?: string;
+
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: ProjectSchemaClass.name,

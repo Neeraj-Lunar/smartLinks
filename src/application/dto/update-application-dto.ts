@@ -44,6 +44,22 @@ export class UpdateApplicationDto {
   packageId?: string;
 
   @ApiPropertyOptional({
+    example: 'id123456789',
+    description: 'bundle ID of the application',
+  })
+  @IsOptional()
+  @IsString()
+  bundleId?: string;
+
+  @ApiPropertyOptional({
+    example: 'YOUR_TEAM_ID',
+    description: 'Ios Team ID of the application',
+  })
+  @IsOptional()
+  @IsString()
+  iosTeamId?: string;
+
+  @ApiPropertyOptional({
     example: 'https://example.com/new-icon.png',
     description: 'Updated image/logo URL',
   })

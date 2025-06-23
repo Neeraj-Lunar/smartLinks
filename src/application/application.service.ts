@@ -42,9 +42,12 @@ export class ApplicationService {
     return app;
   }
 
-  async appWellKnownInfo(subDomain: string): Promise<ApplicationModel[]> {
-    const domain = await this.domainService.findByCond({domainName: subDomain})
-    const app = await this.applicationRepo.findAll({domain: { id :domain.id}});
+  async appWellKnownInfo(domain: string, platform: Platform): Promise<ApplicationModel> {
+    if(!domain && !platform) {
+      throw new BadRequestException('Both domain and platform are needed')
+    } 
+    const domainDetails = await this.domainService.findByCond({domainName: domain})
+    const app = await this.applicationRepo.findOne({domain: { id :domainDetails.id}, os: platform});
     if (!app) {
       throw new NotFoundException(`Application not found`);
     }

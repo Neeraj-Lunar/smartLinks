@@ -11,6 +11,7 @@ import {
 import { CreateApplicationDto } from './dto/create-application-dto';
 import { UpdateApplicationDto } from './dto/update-application-dto';
 import { ApplicationService } from './application.service';
+import { Platform } from 'src/shared/enums/platform.enum';
 
 @Controller('apps')
 export class ApplicationController {
@@ -60,11 +61,14 @@ export class ApplicationController {
     }
   }
 
-  @Get('/info/:subDomain')
-  async infoBySubdomain(@Param('subDomain') subDomain: string) {
-    const application = await this.applicationService.appWellKnownInfo(subDomain);
+  @Get('/config-info/:domain/:platform')
+  async infoBySubdomain(@Param('domain') domain: string, @Param('platform') platform: Platform) {
+    const application = await this.applicationService.appWellKnownInfo(domain, platform);
     return {
-      result: application
+      result: {
+        iosTeamId: application.iosTeamId,
+        iosBundleId: application.packageId
+      }
     }
   }
 

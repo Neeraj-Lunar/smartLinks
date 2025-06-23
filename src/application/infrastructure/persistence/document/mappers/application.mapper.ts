@@ -18,12 +18,11 @@ export class ApplicationMapper {
     domainEntity.status = entity.status;
     domainEntity.packageId = entity.packageId;
     domainEntity.bundleId = entity.bundleId;
+    domainEntity.iosTeamId = entity.iosTeamId;
     domainEntity.imageUrl = entity.imageUrl;
     domainEntity.storeUrl = entity.storeUrl;
     domainEntity.fallbackUrl = entity.fallbackUrl;
     domainEntity.category = entity.category;
-    domainEntity.createdAt = entity.createdAt;
-    domainEntity.updatedAt = entity.updatedAt;
 
     if (isPopulated(entity.project)) {
       domainEntity.project = ProjectMapper.toDomain(entity.project);
@@ -52,12 +51,11 @@ export class ApplicationMapper {
     entity.status = domain.status;
     entity.packageId = domain.packageId;
     entity.bundleId = domain.bundleId;
+    entity.iosTeamId = domain.iosTeamId;
     entity.imageUrl = domain.imageUrl;
     entity.storeUrl = domain.storeUrl;
     entity.fallbackUrl = domain.fallbackUrl;
     entity.category = domain.category;
-    entity.createdAt = domain.createdAt;
-    entity.updatedAt = domain.updatedAt;
 
     if (domain.project?.id) {
       const projectEntity = new ProjectSchemaClass();
