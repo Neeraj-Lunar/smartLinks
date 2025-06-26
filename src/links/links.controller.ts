@@ -7,6 +7,7 @@ import {
   Post,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { LinkService } from './links.service';
 import { UpdateLinkDto } from './dto/update-link-dto';
@@ -42,10 +43,10 @@ export class LinkController {
     return { result };
   }
 
-  @Post('resolve/:shortUrl')
+  @Get('resolve/:shortUrl')
   async resolveLink(
     @Param('shortUrl') shortUrl: string,
-    @Body() deviceInfo: ResolveUrlDto = {},
+    @Query() deviceInfo: ResolveUrlDto = {},
   ) {
     const links = await this.linkService.getRedirectionInfo(shortUrl, deviceInfo);
     return {
