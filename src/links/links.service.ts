@@ -127,16 +127,20 @@ export class LinkService {
   
     const resolvePlatformUrl = (app?: ApplicationModel | null): string | null => app?.storeUrl ?? null;
     const resolveFallBackUrl = (app?: ApplicationModel | null): string | null => app?.fallbackUrl ?? null;
+    const resolveTeamId = (app?: ApplicationModel | null): string | null => app?.iosTeamId ?? null;
     const resolvePlatformPackageId = (app?: ApplicationModel | null): string | null => app?.packageId ?? null;
     if (platform === Platform.ANDROID || platform === Platform.IOS) {
       const app = platform === Platform.ANDROID ? androidApp : iosApp;
       const storeUrl = resolvePlatformUrl(app);
       const packageId = resolvePlatformPackageId(app)
+      const teamId = resolveTeamId(app)
+
       const fallbackUrl = resolveFallBackUrl(app)
       return {
         storeUrl,
         fallbackUrl,
         packageId,
+        teamId,
         meta: {
           params,
           platform
